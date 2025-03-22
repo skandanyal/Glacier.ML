@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(Glacier_Dev)
+project(__name_of_your_project__)
 
 set(CMAKE_CXX_STANDARD 17)
 
