@@ -2,15 +2,14 @@
 #define MULTIPLELINEARREGRESSION_H
 
 #include <vector>
-#include <deque>
 #include <Eigen/Dense>
 
 class MultipleLinearRegression {
 private:
-	Eigen::MatrixXf<Eigen::Dynamic, Eigen::Dynamic> X;
-	Eigen::MatrixXf<Eigen::Dynamic, Eigen::Dynamic> Beta;
-	Eigen::MatrixXf<Eigen::Dynamic, 1> Y;
-	Eigen::MatrixXf<Eigen::Dynamic, 1> E;
+	Eigen::MatrixXf X;
+	Eigen::MatrixXf Beta;
+	Eigen::MatrixXf Y;
+	Eigen::MatrixXf E;
 
 public:
 	MultipleLinearRegression();
@@ -18,6 +17,8 @@ public:
 	void train();
 	void print_values();
 	std::vector<float> predict(std::vector<std::vector<float>> &X_pred);
+	float R_squared();
+	void test(std::vector<std::vector<float>> &x_test, std::vector<float> &y_test);
 };
 
 #endif //MULTIPLELINEARREGRESSION_H
