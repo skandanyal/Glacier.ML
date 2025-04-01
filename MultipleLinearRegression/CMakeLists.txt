@@ -10,4 +10,5 @@ add_executable(
         MLR
         Multiple_Linear_Regression/MultipleLinearRegression.h
         Multiple_Linear_Regression/MultipleLinearRegressionImplementation.cpp
+        Multiple_Linear_Regression/MultipleLinearRegressionExample.cpp
 )
