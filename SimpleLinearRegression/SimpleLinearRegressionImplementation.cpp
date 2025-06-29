@@ -132,8 +132,8 @@ void Simple_Linear_Regression::analyze(std::vector<float> &x_test, std::vector<f
 	float SEm = std::sqrt(res_var / sse_x);
 	float SEc = std::sqrt(res_var * ((1.0 / x_test_size) + (std::pow(x_test_mean, 2) / sse_x)));
 
-	float t_statistic_m = m / SEm; LOG_DEBUG("t_static_m", t_statistic_m);
-	float t_statistic_c = c / SEc; LOG_DEBUG("t_static_c", t_statistic_c); std::cout << "\n";
+	float t_statistic_m = m / SEm; LOG_DEBUG("t_statistic_m", t_statistic_m);
+	float t_statistic_c = c / SEc; LOG_DEBUG("t_statistic_c", t_statistic_c); std::cout << "\n";
 
 	LOG_INFO("Evaluation metrics: ");
 	std::cout << "RMSE: " << rmse << "\n";
