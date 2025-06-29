@@ -1,5 +1,6 @@
 #include <iostream>
 #include "SimpleLinearRegressionFlow.h"
+#include "utilities.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -16,11 +17,12 @@ int main() {
 	SetConsoleMode(hOut, dwMode);
 #endif
 
-	std::vector<float> x_train = {1, 2, 3, 4, 5};
-	std::vector<float> y_train = {2, 3, 6, 8, 10};
+	std::vector<float> x_train, y_train;
+	std::vector<float> x_test, y_test;
 
-	std::vector<float> x_test = {6, 7, 8};
-	std::vector<float> y_test = {12, 15, 16};
+	Utils::read_csv_1d("../SimpleLinearRegression/train_med.csv", x_train, y_train, true);
+	Utils::read_csv_1d("../SimpleLinearRegression/test_med.csv", x_test, y_test, true);
+
 
 	Simple_Linear_Regression iceberg(x_train, y_train);
 	iceberg.train();
