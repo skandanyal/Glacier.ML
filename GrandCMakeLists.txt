@@ -19,6 +19,7 @@ add_executable(MLR
         Utils/utilities.h
         Utils/utilities.cpp 
 )
+target_compile_definitions(MLR PRIVATE DDEBUG_MODE=1)
 
 add_executable(SLR
         SimpleLinearRegression/SimpleLinearRegressionFlow.h
@@ -27,3 +28,4 @@ add_executable(SLR
         Utils/utilities.h
         Utils/utilities.cpp
 )
+target_compile_definitions(MLR PRIVATE DEBUG_MODE=1)

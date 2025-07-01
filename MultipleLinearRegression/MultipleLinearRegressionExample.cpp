@@ -1,44 +1,32 @@
 #include <iostream>
-#include "MultipleLinearRegression.h"
+#include "MultipleLinearRegressionFlow.h"
+#include "utilities.h"
 
 void print_dataset_details() {
     std::string description = "X1: Square feet\nX2: Number of bedrooms\n3:Distance to City Centre\nX4:Age of house (years)\n";
 }
 
 int main() {
-    // Preparing model dataset
 
-    std::vector<std::vector<float>> X_train = {
-        {1500, 3 , 5, 10},
-        {1800, 4, 3, 5},
-        {2100, 4, 8, 15},
-        {2400, 5, 2, 2},
-        {3000, 5, 6, 8}
-    };
-    std::vector<float> Y_train = {75, 95, 85, 120, 130};
+    std::vector<std::vector<float>> x_train, x_test;
+    std::vector<float> y_train, y_test;
 
-    std::vector<std::vector<float>> X_test = {
-        {2000, 3, 4, 8},
-        {2700, 5, 2, 3},
-        {3200, 4, 7, 10},
-    };
-    std::vector<float> Y_test = {80, 115, 125};
+    Utils::read_csv("../MultipleLinearRegression/train_sample_1.csv", x_train, y_train, true);
+    Utils::read_csv("../MultipleLinearRegression/train_sample_1.csv", x_test, y_test, true);
 
 
     // Multiple Linear Regression Workflow
+    Multiple_Linear_Regression iceberg(x_train, y_train);							                                // initialize a model object
+    iceberg.train();											                                                        // train the model
 
-    MultipleLinearRegression iceberg;							                                 // initialize a model object
+    iceberg.print_Rcoeff_values();									                                                    // print the coefficient values
 
-    iceberg.fit(X_train, Y_train);						                                 // fit the training data
-    iceberg.train();											                                 // train the model
+    std::vector<float> Y_pred = iceberg.predict(x_test);
+    iceberg.analyze(x_test, y_test);						                                                        // test the model to find its accuracy using test data
 
-    iceberg.print_values();									                                     // print the coefficient values
-
-    std::vector<std::vector<float>> X_pred = {{2500, 4, 5, 7}};
-    std::vector<float> Y_pred = iceberg.predict(X_pred);
-    std::cout << "\nPredicted price of the house is rs." << Y_pred[0] << " Lakh.\n\n";
-
-    iceberg.analyze(X_test, Y_test);						                                 // test the model to find its accuracy using test data
+    std::vector<float> x_test2 = {-1, 5, 7, -1, 10};
+    float y_test_2 = iceberg.predict(x_test2);
+    std::cout << "\n ans " << y_test_2 << std::endl;
 
     return 0;
 }
