@@ -10,22 +10,29 @@
 
 class Logistic_Regression {
 private:
-    Eigen::MatrixXf X;
-    Eigen::VectorXf Beta;
-    Eigen::VectorXf Y;
-    Eigen::MatrixXf F_x;
-    float P_x;
+    Eigen::MatrixXf X;              // (n x p)
+    Eigen::VectorXf mean;           // (p x 1)
+    Eigen::VectorXf std_dev;        // (p x 1)
+    Eigen::VectorXf Beta;           // (p x 1)
+    Eigen::VectorXf Y;              // (n x 1)
+    std::vector<std::string> labels; // 2
+    Eigen::VectorXf F_x;            // (n x 1)
+    Eigen::VectorXf P_x;            // (n x 1)
+    Eigen::VectorXf F_x_pred;       // (n x 1)
+    Eigen::VectorXf P_x_pred;       // (n x 1)
+    Eigen::MatrixXf Delta;          // (p x 1)
 
 public:
-    Logistic_Regression(std::vector<std::vector<double>>& x, std::vector<std::vector<double>>& y);
-    void train();
-    float predict(std::vector<double> x);
-    std::vector<float> predict(std::vector<std::vector<float>>& x_test);
+    Logistic_Regression(std::vector<std::vector<double>> &x, std::vector<std::string> &y);
+    void train(float alpha, int iterations);
+    std::string predict(std::vector<double> &x_pred);
+    std::vector<std::string> predict(std::vector<std::vector<float>>& x_test);
+    // mimic predict_proba from sklearn
     void analyze(std::vector<std::vector<double>>& x_test, std::vector<float>& y_test);
     void print_values();
 
 private:
-    float sigmoid();
+    float sigmoid(float x);
 
 };
 #endif //LOGISTICREGRESSIONFLOW_H
