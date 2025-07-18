@@ -23,13 +23,14 @@ private:
     Eigen::MatrixXf Delta;          // (p x 1)
 
 public:
-    Logistic_Regression(std::vector<std::vector<double>> &x, std::vector<std::string> &y);
+    Logistic_Regression(std::vector<std::vector<float>> &x, std::vector<std::string> &y);
     void train(float alpha, int iterations);
-    std::string predict(std::vector<double> &x_pred);
+    std::string predict(std::vector<float> &x_pred);
     std::vector<std::string> predict(std::vector<std::vector<float>>& x_test);
+    void print_predict(std::vector<std::vector<float>>& x_val, std::vector<std::string> &y_val);;
     // mimic predict_proba from sklearn
-    void analyze(std::vector<std::vector<double>>& x_test, std::vector<float>& y_test);
-    void print_values();
+    void analyze(std::vector<std::vector<float>> &x_test, std::vector<std::string> &y_test);
+    void print_Beta_values();
 
 private:
     float sigmoid(float x);
