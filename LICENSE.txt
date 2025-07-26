@@ -8,8 +8,8 @@ You may not, without explicit written permission from the Licensor:
 - Copy, use, or modify any part of the Software in your projects.
 - Redistribute or republish the Software in any form, public or private.
 - Use the Software in academic submissions, teaching materials, or publications.
-- Use or integrate the Software into any commercial, industrial, or production s
-etting.
+- Use or integrate the Software into any commercial, industrial, or production 
+setting.
 - File or claim any patents derived from or based on this Software.
 
 You may:
