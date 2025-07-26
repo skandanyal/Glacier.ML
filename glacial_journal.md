@@ -1,4 +1,4 @@
-### 16-07-2025, 02:12 am 
+  ### 16-07-2025, 02:12 am 
 * Wrote the training and predict functions of logistic regression.
 * My arms, upper back and thighs are still aching after yesterday's gym session (brdr made me improve on yesterday's arm day).
 * SGPA is 7.26. This project better be worth these freaking compromises.
@@ -29,3 +29,4 @@
 * Datasets have been moved to a separate folder outside all the models.
 * Man, working alone feels scary. You know what is even more scary? Testing out your models alone while it goes through bugs and unnoticed logical errors.
 * Perplexity was dumb back in my 2nd sem. Turns out that it is stil equally dumb even today. Mathe ke upar 'Pro' chipkaane se koi bhi agent professional grade agent nahi ban jaata... :[ ChatGPT still rocks when it comes to answering basic questions.
+
