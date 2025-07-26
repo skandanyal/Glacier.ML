@@ -21,7 +21,7 @@ Any violation of these terms, including unauthorized copying, reuse, or integrat
 of this Software, may be subject to legal action under applicable intellectual property 
 laws.
 
-Patent Rights: The Licensor reserves all rights to file patents related to this work 
+**Patent Rights:** The Licensor reserves all rights to file patents related to this work 
 and its underlying ideas, algorithms, or implementations. Any use of the Software or 
 its concepts in a way that infringes on this right will be considered a breach of this 
 license.
