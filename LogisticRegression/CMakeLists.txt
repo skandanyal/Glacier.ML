@@ -14,6 +14,7 @@ add_executable(LogR
         LogisticRegression/LogisticRegressionExample.cpp
         LogisticRegression/LogisticRegressionFlow.h
         LogisticRegression/LogisticRegressionImplementation.cpp
+        LogisticRegression/LogisticRegressionREADME.md
         Utils/utilities.h
         Utils/utilities.cpp
 )

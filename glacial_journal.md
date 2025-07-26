@@ -23,3 +23,9 @@
 | 50000 | 0.0001 | 2000 | 27.8964 | 46.1069 |
 | 100000 | 0.0001 | 2000 | 59.6352 | 60.2744 |
 | 140000 | 0.0001 | 2000 | 80.9204 | 63.5351 |
+
+### 26-07-2025 10:16 pm
+* KNN Regression model is fixed and uploaded, needs to be benchmarked.
+* Datasets have been moved to a separate folder outside all the models.
+* Man, working alone feels scary. You know what is even more scary? Testing out your models alone while it goes through bugs and unnoticed logical errors.
+* Perplexity was dumb back in my 2nd sem. Turns out that it is stil equally dumb even today. Mathe ke upar 'Pro' chipkaane se koi bhi agent professional grade agent nahi ban jaata... :[ ChatGPT still rocks when it comes to answering basic questions.

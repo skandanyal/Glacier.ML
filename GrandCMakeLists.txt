@@ -29,3 +29,32 @@ add_executable(SLR
         Utils/utilities.cpp
 )
 target_compile_definitions(MLR PRIVATE DEBUG_MODE=1)
+
+add_executable(LogR
+        LogisticRegression/LogisticRegressionExample.cpp
+        LogisticRegression/LogisticRegressionFlow.h
+        LogisticRegression/LogisticRegressionImplementation.cpp
+        Utils/utilities.h
+        Utils/utilities.cpp
+)
+target_compile_definitions(LogR PRIVATE DEBUG_MODE=1)
+
+add_executable(KNNR
+        KNNRegressor/KNNRegressorExample.cpp
+        KNNRegressor/KNNRegressorFlow.h
+        KNNRegressor/KNNRegressorImplementation.cpp
+        KNNRegressor/min_heap.hpp
+        Utils/utilities.h
+        Utils/utilities.cpp
+)
+target_compile_definitions(KNNR PRIVATE DEBUG_MODE=1)
+
+add_executable(KNNC
+        KNNClassifier/KNNClassifierExample.cpp
+        KNNClassifier/KNNClassifierFlow.h
+        KNNClassifier/KNNClassifierImplementation.cpp
+        Utils/utilities.h
+        Utils/utilities.cpp
+)
+target_compile_definitions(KNNC PRIVATE DEBUG_MODE=1)
+
