@@ -1,0 +1,31 @@
+Copyright © 2025 Skandan C Y. All rights reserved.
+
+This software and associated documentation files (the "Software") are the exclusive 
+intellectual property of Skandan C Y ("Licensor"). The Software is made available 
+for educational and non-commercial viewing purposes only and is not open source.
+
+You may not, without explicit written permission from the Licensor:
+- Copy, use, or modify any part of the Software in your projects.
+- Redistribute or republish the Software in any form, public or private.
+- Use the Software in academic submissions, teaching materials, or publications.
+- Use or integrate the Software into any commercial, industrial, or production setting.
+- File or claim any patents derived from or based on this Software.
+
+You may:
+- View the code for learning purposes.
+- Cite it in academic works with proper attribution **and** prior written permission 
+  from the Licensor.
+
+Any violation of these terms, including unauthorized copying, reuse, or integration 
+of this Software, may be subject to legal action under applicable intellectual property 
+laws.
+
+**Patent Rights:** The Licensor reserves all rights to file patents related to this work 
+and its underlying ideas, algorithms, or implementations. Any use of the Software or 
+its concepts in a way that infringes on this right will be considered a breach of this 
+license.
+
+No warranties are given, and liability is disclaimed to the maximum extent permitted 
+by law.
+
+For licensing inquiries or permissions, contact: skandanyalagach@gmail.com
