@@ -13,13 +13,13 @@ include_directories(${CMAKE_SOURCE_DIR}/Utils)
 #add-definitions(-DDEBUG_MODE=0)
 
 add_executable(MLR
-        MultipleLinearRegression/MultipleLinearRegression.h
+        MultipleLinearRegression/MultipleLinearRegressionFlow.h
         MultipleLinearRegression/MultipleLinearRegressionExample.cpp
         MultipleLinearRegression/MultipleLinearRegressionImplementation.cpp
         Utils/utilities.h
-        Utils/utilities.cpp 
+        Utils/utilities.cpp
 )
-target_compile_definitions(MLR PRIVATE DDEBUG_MODE=1)
+target_compile_definitions(MLR PRIVATE DEBUG_MODE=1)
 
 add_executable(SLR
         SimpleLinearRegression/SimpleLinearRegressionFlow.h
@@ -28,4 +28,32 @@ add_executable(SLR
         Utils/utilities.h
         Utils/utilities.cpp
 )
-target_compile_definitions(MLR PRIVATE DEBUG_MODE=1)
+target_compile_definitions(SLR PRIVATE DEBUG_MODE=1)
+
+add_executable(LogR
+        LogisticRegression/LogisticRegressionExample.cpp
+        LogisticRegression/LogisticRegressionFlow.h
+        LogisticRegression/LogisticRegressionImplementation.cpp
+        Utils/utilities.h
+        Utils/utilities.cpp
+)
+target_compile_definitions(LogR PRIVATE DEBUG_MODE=1)
+
+add_executable(KNNR
+        KNNRegressor/KNNRegressorExample.cpp
+        KNNRegressor/KNNRegressorFlow.h
+        KNNRegressor/KNNRegressorImplementation.cpp
+        KNNRegressor/min_heap.hpp
+        Utils/utilities.h
+        Utils/utilities.cpp
+)
+target_compile_definitions(KNNR PRIVATE DEBUG_MODE=1)
+
+add_executable(KNNC
+        KNNClassifier/KNNClassifierExample.cpp
+        KNNClassifier/KNNClassifierFlow.h
+        KNNClassifier/KNNClassifierImplementation.cpp
+        Utils/utilities.h
+        Utils/utilities.cpp
+)
+target_compile_definitions(KNNC PRIVATE DEBUG_MODE=0)
