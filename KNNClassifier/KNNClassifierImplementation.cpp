@@ -140,11 +140,11 @@ void KNNClassifier::train(int k_i, std::string &distance_metric_i, int p_i) {
     if (k_i % 2 == 0) k = k_i - 1; // always store an odd value of k
     else k = k_i;
 
-    if (distance_metric_i == "Manhattan")
+    if (distance_metric_i == "manhattan")
         distance_metric = 1;
-    else if (distance_metric_i == "Euclidean")
+    else if (distance_metric_i == "euclidean")
         distance_metric = 2;
-    else if (distance_metric_i == "Minkowski") {
+    else if (distance_metric_i == "minkowski") {
         distance_metric = 3;
         p = p_i;
     } else {
@@ -162,7 +162,7 @@ void KNNClassifier::train(int k_i, std::string &distance_metric_i, int p_i) {
 }
 
 std::string KNNClassifier::predict(std::vector<float> &x_pred) {
-    LOG_INFO("Singular prediction initiated...");
+    // put back the log herew
 
     if (x_pred.size() != X[0].size()) {
         LOG_ERROR("Train and test dataset have different number of features.");

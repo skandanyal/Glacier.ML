@@ -29,10 +29,12 @@ KNNRegressor::KNNRegressor(std::vector<std::vector<float>> &X_i, std::vector<flo
            ╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝╚══════╝
       )" << "\n";
 
+    // check for empty dataset
     if (X_i.empty() || Y_i.empty()) { // Check if the inputs are valid or not
         LOG_ERROR("Input data cannot be empty.");
     }
 
+    // check for inconsistency in the dataset
     for (auto &row : X_i) // Check if all the rows are of the same size
         if (row.size() != X_i[0].size()) {
             LOG_ERROR("Row sizes not consistent.");
@@ -55,6 +57,7 @@ KNNRegressor::KNNRegressor(std::vector<std::vector<float>> &X_i, std::vector<flo
     X.resize(nrows, std::vector<float>(ncols, 0.0));
     Y.resize(nrows, 0.0);
 
+    // populating Eigen X matrix with the data
     for (size_t row = 0; row < nrows; row++)
         for (size_t col = 0; col < ncols; col++)
             X[row][col] = X_i[row][col];
@@ -62,25 +65,9 @@ KNNRegressor::KNNRegressor(std::vector<std::vector<float>> &X_i, std::vector<flo
     LOG_DEBUG("Number of cols in x_train", X[0].size());
     std::cout << "\n";
 
-    // mean = Eigen::VectorXf::Zero(ncols);
-    // std_dev = Eigen::VectorXf::Zero(ncols);
-
     // for normalizing X
     mean.resize(ncols, 0.0f);
     std_dev.resize(ncols, 0.0f);
-
-    // for (Eigen::Index colm = 0; colm < ncols; colm++) {
-    //     mean(colm) = X.col(colm + 1).mean();
-    //     std_dev(colm) = std::sqrt((X.col(colm + 1).array() -
-    //     mean(colm)).square().sum() / X.rows());
-    //
-    //     if (std_dev(colm) == 0)
-    //         std_dev(colm) = 1e-8;
-    //
-    //     // normalization
-    //     X.col(colm + 1) = (X.col(colm + 1).array() - mean(colm)) /
-    //     std_dev(colm);
-    // }
 
     // calculating mean and standard deviation for normalization
     for (size_t colm = 0; colm < ncols; colm++) {
@@ -106,6 +93,7 @@ KNNRegressor::KNNRegressor(std::vector<std::vector<float>> &X_i, std::vector<flo
         }
     }
 
+    // populating the Eigen Y matrix with the data
     size_t Y_i_size = Y_i.size();
     for (size_t i = 0; i < Y_i_size; i++)
       Y[i] = Y_i[i];
@@ -151,15 +139,6 @@ float KNNRegressor::predict(std::vector<float> &x_pred) {
     }
 
     ////////////////////// Prediction begins here //////////////////////
-
-    /*
-     * Define the steps required to predict the values here:
-     * 1. (done) normalize the training dataset
-     * 2. (done) find out the distance from each entry
-     * 3. (done) push the dataset into a min heap
-     * 4. (done) pick out the top k
-     * 5. (done) average out the values to find the prediction value
-     */
 
     // normalize the vector first
     for (size_t col = 0; col < x_pred.size(); col++) {
@@ -233,9 +212,9 @@ float KNNRegressor::predict(std::vector<float> &x_pred) {
         heap.pop();
     }
 
-    ////////////////////// Prediction ends here //////////////////////
-
     return answer / (float) k;
+
+    ////////////////////// Prediction ends here //////////////////////
 }
 
 std::vector<float> KNNRegressor::predict(std::vector<std::vector<float>> &x_pred) {
@@ -244,6 +223,8 @@ std::vector<float> KNNRegressor::predict(std::vector<std::vector<float>> &x_pred
     if (x_pred[0].size() != (int)X[0].size()) {
         LOG_ERROR("Train and test dataset have different number of features.");
     }
+
+    ////////////////////// Prediction begins here //////////////////////
 
     size_t nrows = x_pred.size();
     size_t ncols = x_pred[0].size();
@@ -258,6 +239,8 @@ std::vector<float> KNNRegressor::predict(std::vector<std::vector<float>> &x_pred
     }
 
     return result;
+
+    ////////////////////// Prediction ends here //////////////////////
 }
 
 void KNNRegressor::print_predict(std::vector<std::vector<float>> &x_pred, std::vector<float> &y_pred) {
@@ -265,7 +248,6 @@ void KNNRegressor::print_predict(std::vector<std::vector<float>> &x_pred, std::v
 
     std::cout << "Predicted\t|\tActual\n";
     for (int i = 0; i < y_test.size(); i++) {
-        std::cout << "here....................................................\n\n";
         std::cout << y_test[i] << "\t|\t" << y_pred[i] << "\n";
     }
     std::cout << "\n";

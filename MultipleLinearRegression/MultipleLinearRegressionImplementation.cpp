@@ -12,17 +12,29 @@
     #define LOG_DEBUG(x)
 #endif
 
-
+// constructor
 Multiple_Linear_Regression::Multiple_Linear_Regression(std::vector<std::vector<float>> &X_i, std::vector<float> &Y_i) : X(), Y(), Beta(), E() {
+    std::cout << R"(
+           ██████╗ ██╗      █████╗  ██████╗██╗███████╗██████╗    ███╗   ███╗██╗
+          ██╔════╝ ██║     ██╔══██╗██╔════╝██║██╔════╝██╔══██╗   ████╗ ████║██║
+          ██║  ███╗██║     ███████║██║     ██║█████╗  ██████╔╝   ██╔████╔██║██║
+          ██║   ██║██║     ██╔══██║██║     ██║██╔══╝  ██╔══██╗   ██║╚██╔╝██║██║
+          ╚██████╔╝███████╗██║  ██║╚██████╗██║███████╗██║  ██║██╗██║ ╚═╝ ██║███████╗
+           ╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝╚══════╝
+      )" << "\n";
+
+    // check for empty dataset
     if (X_i.empty() || Y_i.empty()) {                                 // Check if the inputs are valid or not
         LOG_ERROR("Input data cannot be empty.");
     }
 
+    // check for inconsistency in the dataset
     for (auto &row : X_i)                                                                                  // Check if all the rows are of the same size
         if (row.size() != X_i[0].size()) {
             LOG_ERROR("Row sizes not consistent.");
         }
 
+    // check for infinite values in the dataset
     for (size_t i = 0; i < X_i.size(); i++) {
         for (size_t j = 0; j < X_i[i].size(); j++) {
             if (!std::isfinite(X_i[i][j]))
@@ -38,11 +50,13 @@ Multiple_Linear_Regression::Multiple_Linear_Regression(std::vector<std::vector<f
     LOG_DEBUG("Number of columns in X before adding 1 column", ncols);
     std::cout << "\n";
 
+    // Inititalizing Eigen X and Y matrix
     X = Eigen::MatrixXf(nrows, ncols + 1);                                                                          // use this method to resize an eigen matrix;
     Y = Eigen::VectorXf(nrows);                                                                                         // use (nrows, 1) to ensure column vector
 
     X.col(0) = Eigen::VectorXf::Ones((Eigen::Index) nrows);
 
+    // populating the Eigen X matrix with the data
     for (size_t row = 0; row < nrows; row++)
         for (size_t col = 0; col < ncols; col++)
             X(row, col + 1) = X_i[row][col];                                                                            // X matrix, with 0th column as 1
@@ -50,6 +64,7 @@ Multiple_Linear_Regression::Multiple_Linear_Regression(std::vector<std::vector<f
     LOG_DEBUG("Number of cols in x_train", X.cols());
     std::cout << "\n";
 
+    // populating the Eigen Y matrix with data
     size_t Y_i_size = Y_i.size();
     for (size_t i = 0; i < Y_i_size; i++)
         Y(i) = Y_i[i];
@@ -61,9 +76,7 @@ Multiple_Linear_Regression::Multiple_Linear_Regression(std::vector<std::vector<f
 void Multiple_Linear_Regression::train() {
     auto train_start = std::chrono::high_resolution_clock::now();
 
-    // Beta is (n x m) as X is (m * n)
-    // Beta = (X.transpose() * X).inverse() * X.transpose() * Y;                                                        // (m x n) * (n * m) * (m * n) * (n x 1)
-    // Beta = (X.transpose() * X).ldlt().solve(X.transpose() * Y);
+    ////////////////////// Training begins here //////////////////////
 
     Beta = (X.transpose() * X).completeOrthogonalDecomposition().solve(X.transpose() * Y);
 
@@ -72,6 +85,8 @@ void Multiple_Linear_Regression::train() {
     std::cout << "\n";
 
     E = Y - X * Beta; // (n * 1)
+
+    ////////////////////// Training ends here ////////////////////////
 
     auto train_end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(train_end - train_start);
@@ -95,6 +110,8 @@ float Multiple_Linear_Regression::predict(std::vector<float> &x_pred) {
         return -1;
     }
 
+    ////////////////////// Prediction begins here //////////////////////
+
     Eigen::VectorXf x(beta_size);
 
     x(0) = 1.0f;
@@ -103,6 +120,8 @@ float Multiple_Linear_Regression::predict(std::vector<float> &x_pred) {
     }
 
     return x.dot(Beta);
+
+    ////////////////////// Prediction ends here //////////////////////
 }
 
 std::vector<float> Multiple_Linear_Regression::predict(std::vector<std::vector<float>> &X) {
@@ -115,6 +134,8 @@ std::vector<float> Multiple_Linear_Regression::predict(std::vector<std::vector<f
      * sizing hence using this explicit conversion over here - Eigen::Index
      * instead of auto
      */
+
+    ////////////////////// Prediction begins here //////////////////////
 
     auto nrows = static_cast<Eigen::Index>(X.size());
     auto ncols = static_cast<Eigen::Index>(X[0].size());
@@ -133,6 +154,8 @@ std::vector<float> Multiple_Linear_Regression::predict(std::vector<std::vector<f
     result[i] = Y_pred[i];
 
     return result;
+
+    ////////////////////// Prediction ends here //////////////////////
 }
 
 float Multiple_Linear_Regression::R_squared() {
@@ -142,11 +165,12 @@ float Multiple_Linear_Regression::R_squared() {
 }
 
 void Multiple_Linear_Regression::analyze(std::vector<std::vector<float>> &x_test, std::vector<float> &y_test) {
-    if (x_test.size() != y_test.size()) {
+    size_t x_test_rows = x_test.size(), x_test_cols = x_test[0].size();
+
+    if (x_test_cols != y_test.size()) {
         LOG_ERROR("Test size does not match.");
     }
 
-    float n_test = x_test.size();
     float mse = 0.0, rmse = 0.0, mae = 0.0, mape = 0.0;
 
     std::vector<float> y_pred = predict(x_test);
@@ -154,15 +178,16 @@ void Multiple_Linear_Regression::analyze(std::vector<std::vector<float>> &x_test
         float error = y_test[i] - y_pred[i];
         mse += error * error;
         mae += abs(error);
+
         if (y_test[i] != 0) {
             mape += std::abs(error / y_test[i]);
         }
     }
 
-    mse = mse / n_test;
+    mse = mse / x_test_rows;
     rmse = std::sqrt(mse);
-    mae = mae / n_test;
-    mape = mape / n_test * 100;
+    mae = mae / x_test_rows;
+    mape = mape / x_test_rows * 100;
 
     LOG_INFO("Evaluation metrics: ");
     std::cout << "R_squared: " << R_squared() << "\n";
@@ -171,3 +196,5 @@ void Multiple_Linear_Regression::analyze(std::vector<std::vector<float>> &x_test
     std::cout << "MAE: " << mae << "\n";
     std::cout << "MAPE: " << mape << "\n";
 }
+
+// t-test is for testing individual params, f-test is for testing the entire model

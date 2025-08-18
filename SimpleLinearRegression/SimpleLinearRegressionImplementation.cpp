@@ -10,15 +10,15 @@
 #include "SimpleLinearRegressionFlow.h"
 #include "utilities.h"
 
-
+#define LOG_ERROR(x) std::cerr << "[ERROR] " << x << " Exiting program here... \n"; std::exit(EXIT_FAILURE);		// errors and exits
 #define LOG_DEBUG(x, x_val) std::cout << "\033[35m[DEBUG] \033[0m" << x << ": " << x_val<< "\n"							// deeper info to be used during development
 #define LOG_INFO(x) std::cout << "\033[36m[INFO]  \033[0m" << x << "\n";												// high level info while users are using it
 #define LOG_TIME(task, duration) std::cout << "\033[32m[TIME]  \033[0m" << task << " took " << duration << " nanooseconds. \n";					// time taken
 
 #if DEBUG_MODE
-	#define LOG_ERROR(x) std::cerr << "[ERROR] " << x << " Exiting program here... \n"; std::exit(EXIT_FAILURE);		// errors and exits
+	#define LOG_DEBUG(x, x_val) std::cout << "\033[35m[DEBUG] \033[0m" << x << ": " << x_val<< "\n"							// deeper info to be used during development
 #else
-	#define LOG_ERROR(x)
+	#define LOG_DEBUG(x, x_val)
 #endif
 
 // constructor
@@ -109,7 +109,7 @@ void Simple_Linear_Regression::analyze(std::vector<float> &x_test, std::vector<f
 	x_test_size = x_test.size(), x_test_mean = Utils::mean(x_test);
 	float mse = 0.0, rmse = 0.0, mae = 0.0, mape = 0.0;
 	float rss = 0.0, sse_x = 0.0;																						// rss - residual sum of squares
-																														// sse_x - sum of squares of errors in x
+	// sse_x - sum of squares of errors in x
 
 	for(size_t i=0; i<x_test_size; i++) {
 		float y_pred = predict(x_test[i]);
@@ -122,6 +122,7 @@ void Simple_Linear_Regression::analyze(std::vector<float> &x_test, std::vector<f
 		}
 		sse_x += std::pow((x_test[i] - x_test_mean), 2);
 	}
+		
 	mse = rss / x_test_size;
 	rmse = std::sqrt(mse);
 	mae = mae / x_test_size;
@@ -132,8 +133,8 @@ void Simple_Linear_Regression::analyze(std::vector<float> &x_test, std::vector<f
 	float SEm = std::sqrt(res_var / sse_x);
 	float SEc = std::sqrt(res_var * ((1.0 / x_test_size) + (std::pow(x_test_mean, 2) / sse_x)));
 
-	float t_statistic_m = m / SEm; LOG_DEBUG("t_static_m", t_statistic_m);
-	float t_statistic_c = c / SEc; LOG_DEBUG("t_static_c", t_statistic_c); std::cout << "\n";
+	float t_statistic_m = m / SEm; LOG_DEBUG("t_statistic_m", t_statistic_m);
+	float t_statistic_c = c / SEc; LOG_DEBUG("t_statistic_c", t_statistic_c); std::cout << "\n";
 
 	LOG_INFO("Evaluation metrics: ");
 	std::cout << "RMSE: " << rmse << "\n";
@@ -188,11 +189,12 @@ void Simple_Linear_Regression::print_confidence_intervals(const std::string& par
 	std::cout << "\n";
 }
 
-void Simple_Linear_Regression::predict_print(const std::vector<float>& x_pred) {
+void Simple_Linear_Regression::predict_print(const std::vector<float>& x_pred, const std::vector<float>& y_pred) {
 	LOG_INFO("Predicted values: ");
-	std::cout << "X values:\tY values:\n";
-	for(float i : x_pred) {
-		std::cout << i << "\t\t" << predict(i) << "\n";
+	std::cout << "X values:\tY values (predicted):\tY values (actual):\n";
+	float x_pred_size = x_pred.size();
+	for(size_t i=0; i<x_pred_size; i++) {
+		std::cout << x_pred[i] << "\t\t" << predict(x_pred[i]) << "\t\t" << y_pred[i] << "\n";
 	}
 	std::cout << "\n";
 }
@@ -201,6 +203,7 @@ void Simple_Linear_Regression::predict_print(const std::vector<float>& x_pred) {
 std::vector<float> Simple_Linear_Regression::predict(const std::vector<float> &x_pred) {
 	std::vector<float> result(x_pred.size(), 0.0);
 	size_t x_pred_size = x_pred.size();
+
 	for(size_t i=0; i<x_pred_size; i++) {
 		result[i] = predict(x_pred[i]);
 	}
