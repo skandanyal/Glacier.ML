@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <chrono>
+#include "omp.h"
 
 // errors and exits
 #define LOG_ERROR(x) std::cerr << "[ERROR] " << x << " Exiting program here... \n"; std::exit(EXIT_FAILURE);
@@ -30,6 +31,7 @@
     #define LOG_DEBUG(x, x_val)
 #endif
 
+// TODO - rewrite predict() using flat memory + OpenMP + avoid unnecessary sqrt → THEN compare benchmark → THEN move on.
 
 // constructor
 KNNClassifier::KNNClassifier(std::vector<std::vector<float> > &X_i, std::vector<std::string> &Y_i) {
@@ -42,62 +44,83 @@ KNNClassifier::KNNClassifier(std::vector<std::vector<float> > &X_i, std::vector<
          ╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝╚══════╝
     )" << std::endl;
 
+    // check for the number of threads, cut it by two, and use those many
+    int threads = omp_get_max_threads() / 2;
+    omp_set_num_threads(threads);
+
+    // check if input matrices are empty or not
     if (X_i.empty() || Y_i.empty()) {                                                                                   // Check if the inputs are valid or not
         LOG_ERROR("Input data cannot be empty.");
     }
 
+    //
     for (auto &row : X_i)                                                                                  // Check if all the rows are of the same size
         if (row.size() != X_i[0].size()) {
             LOG_ERROR("Row sizes not consistent.");
         }
 
-    // check for infinite values in the dataset
-    for (size_t i = 0; i < X_i.size(); i++) {
-        for (size_t j = 0; j < X_i[i].size(); j++) {
-            if (!std::isfinite(X_i[i][j]))
-                std::cout << "[BAD VALUE] X_i[" << i << "][" << j << "] = " << X_i[i][j]
-                    << "\n";
-        }
-    }
+//     // check for infinite values in the dataset
+// #pragma omp parallel for num_threads(threads)
+//     for (size_t i = 0; i < X_i.size(); i++) {
+//         for (size_t j = 0; j < X_i[i].size(); j++) {
+//             if (!std::isfinite(X_i[i][j]))
+//                 std::cout << "[BAD VALUE] X_i[" << i << "][" << j << "] = " << X_i[i][j]
+//                     << "\n";
+//         }
+//     }
 
-    size_t nrows = X_i.size();
-    size_t ncols = X_i[0].size();
+    nrows = X_i.size();
+    ncols = X_i[0].size();
 
-    X.resize(nrows, std::vector<float>(ncols, 0.0));
+    X.resize(nrows * ncols, 0.0);
     Y.resize(nrows);                                                                                      // use (nrows, 1) to ensure column vector
 
     for (size_t row = 0; row < nrows; row++)
         for (size_t col = 0; col < ncols; col++)
-            X[row][col] = X_i[row][col];
+            X[row * ncols + col] = X_i[row][col];
     LOG_DEBUG("Number of rows in x_train", X.size());
     LOG_DEBUG("Number of cols in x_train", X[0].size());
     std::cout << "\n";
+
+    // check for infinite values - parallelized, SIMD
+    int bad_values = 0;
+#pragma omp parallel for simd reduction(+:bad_values)
+    for (size_t i = 0; i < nrows * ncols; i++) {
+        if (!std::isfinite(X[i]))
+            bad_values++;
+    } if (bad_values > 0) {
+        LOG_ERROR("Infinite values exist in the dataset.")
+    }
 
     // normalize X
     mean.resize(ncols, 0.0f);
     std_dev.resize(ncols, 0.0f);;
 
+    // TODO - optimize this block further by normalizing using the same element from the std_dev and mean vectors repeatedly
     // calculating mean and standard deviation for normalization
+#pragma omp parallel for
     for (size_t colm = 0; colm < ncols; colm++) {
         float col_sum = 0.0f;
+#pragma omp simd reduction(+:col_sum)
         for (size_t row = 0; row < nrows; row++) {
-            col_sum += X[row][colm];
+            col_sum += X[row * ncols + colm];
         } mean[colm] = col_sum / (float) nrows;
 
         float col_sq_diff = 0.0f;
+#pragma omp simd reduction(+:col_sq_diff)
         for (size_t row = 0; row < nrows; row++) {
-            col_sq_diff += std::pow(X[row][colm] - mean[colm], 2);
-        }
-        std_dev[colm] = std::sqrt(col_sq_diff / (float) nrows);
+            col_sq_diff += (X[row * ncols + colm] - mean[colm]) * (X[row * ncols + colm] - mean[colm]);
+        } std_dev[colm] = std::sqrt(col_sq_diff / (float) nrows);
 
         if (std_dev[colm] == 0.0f)
             std_dev[colm] = 1e-8;
     }
 
     // normalizing the dataset
+#pragma omp parallel for
     for (size_t row = 0; row < nrows; row++) {
         for (size_t colm = 0; colm < ncols; colm++) {
-            X[row][colm] = (X[row][colm] - mean[colm]) / std_dev[colm];
+            X[row * ncols + colm] = (X[row * ncols + colm] - mean[colm]) / std_dev[colm];
         }
     }
 
@@ -162,15 +185,16 @@ void KNNClassifier::train(int k_i, std::string &distance_metric_i, int p_i) {
 }
 
 std::string KNNClassifier::predict(std::vector<float> &x_pred) {
-    // put back the log herew
+    // put back the log here
 
-    if (x_pred.size() != X[0].size()) {
+    if (x_pred.size() != ncols) {
         LOG_ERROR("Train and test dataset have different number of features.");
     }
 
     ////////////////////// Prediction begins here //////////////////////
 
     // normalize the vector first
+#pragma omp parallel for
     for (size_t col = 0; col < x_pred.size(); col++) {
         x_pred[col] = (x_pred[col] - mean[col]) / std_dev[col];
     }
@@ -182,9 +206,9 @@ std::string KNNClassifier::predict(std::vector<float> &x_pred) {
         case 1: // Manhattan distance
             for (size_t row = 0; row < X.size(); row++) {
                 double distance = 0;
-
-                for (size_t col = 0; col < X[row].size(); col++) {
-                    distance += std::abs(X[row][col] - x_pred[col]);
+#pragma omp parallel for reduction(+:distance)
+                for (size_t col = 0; col < ncols; col++) {
+                    distance += std::abs(X[row * ncols + col] - x_pred[col]);
                 }
                 LOG_DEBUG("Manhattan distance", std::to_string(distance));
                 std::pair<double, int> dist = {distance, Y[row]};
@@ -198,13 +222,14 @@ std::string KNNClassifier::predict(std::vector<float> &x_pred) {
 
         case 2: // Euclidean distance
             for (size_t row = 0; row < X.size(); row++) {
-                double distance = 0;
+                double data = 0.0f;
 
-                for (size_t col = 0; col < X[row].size(); col++) {
-                    distance += std::pow(X[row][col] - x_pred[col], 2);
+#pragma omp parallel for reduction(+:data)
+                for (size_t col = 0; col < ncols; col++) {
+                    data += X[row * ncols + col] - x_pred[col];
                 }
                 LOG_DEBUG("Euclidean distance", std::to_string(distance));
-                std::pair<double, int> to_push = {std::sqrt(distance), Y[row]};
+                std::pair<double, int> to_push = {data * data , Y[row]};
 
                 // push into a min heap
                 heap.push(to_push);
@@ -217,11 +242,12 @@ std::string KNNClassifier::predict(std::vector<float> &x_pred) {
             for (size_t row = 0; row < X.size(); row++) {
                 double distance = 0;
 
-                for (size_t col = 0; col < X[row].size(); col++) {
-                    distance += std::pow(std::abs(X[row][col] - x_pred[col]), p);
+#pragma omp parallel for reduction(+:distance)
+                for (size_t col = 0; col < ncols; col++) {
+                    distance += std::pow(std::abs(X[row * ncols + col] - x_pred[col]), p);
                 }
                 LOG_DEBUG("Minkowski distance", std::to_string(distance));
-                std::pair<double, int> to_push = {std::pow(distance, 1.0f/p), Y[row]};
+                std::pair<double, int> to_push = {distance, Y[row]};
 
                 // push into a min heap
                 heap.push(to_push);
@@ -261,19 +287,19 @@ std::string KNNClassifier::predict(std::vector<float> &x_pred) {
 std::vector<std::string> KNNClassifier::predict(std::vector<std::vector<float>> &x_pred) {
     LOG_INFO("Block prediction initiated...");
 
-    if (x_pred[0].size() != (int)X[0].size()) {
+    if (x_pred[0].size() != ncols) {
         LOG_ERROR("Train and test dataset have different number of features.");
     }
 
-    size_t nrows = x_pred.size();
-    size_t ncols = x_pred[0].size();
+    size_t Nrows = x_pred.size();
+    size_t Ncols = x_pred[0].size();
 
-    LOG_DEBUG("Number of rows in X_test", nrows);
-    LOG_DEBUG("Number of columns in X_test", ncols);
+    LOG_DEBUG("Number of rows in X_test", Nrows);
+    LOG_DEBUG("Number of columns in X_test", Ncols);
     std::cout << "\n";
 
     std::vector<std::string> result;
-    for (size_t row = 0; row < nrows; row++) {
+    for (size_t row = 0; row < Nrows; row++) {
         result.push_back(predict(x_pred[row]));
     }
 
