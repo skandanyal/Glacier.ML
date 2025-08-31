@@ -35,7 +35,7 @@ Glacier is a header-only library written in C++, which contains all the machine 
 
 ## Resources used:
 [![Statistical Learning (Stanford)](https://img.shields.io/badge/Statistical%20Learning-Stanford%20Online-red?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/playlist?list=PLoROMvodv4rPP6braWoRt5UCXYZ71GZIQ&si=0pQvuCwQpy7xMw9u)
-[![Applied Multivariate Analysis](https://img.shields.io/badge/Multivariate%20Analysis-NPTEL-orange?style=for-the-badge&logo=nptel&logoColor=white)](https://youtube.com/playlist?list=PLbMVogVj5nJRt-ZxRG1KRjxNoy7J_IaW2&si=CrIS5DlyWzsbJeCj)
+[![Applied Multivariate Statistical Analysis](https://img.shields.io/badge/Multivariate%20Analysis-NPTEL-orange?style=for-the-badge&logo=nptel&logoColor=white)](https://youtube.com/playlist?list=PLbMVogVj5nJRt-ZxRG1KRjxNoy7J_IaW2&si=CrIS5DlyWzsbJeCj)
 ![Core ML Concepts](https://img.shields.io/badge/Core%20ML%20Concepts-4th%20Sem%20Lab-blueviolet?style=for-the-badge&logo=code&logoColor=white)
 
 ## Languages and Frameworks used:
