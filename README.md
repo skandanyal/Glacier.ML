@@ -26,7 +26,7 @@ Glacier is a header-only library written in C++, which contains all the machine 
 ![Boost](https://img.shields.io/badge/Boost-1F1232?style=for-the-badge\&logo=code\&logoColor=white)
 ![OpenMP](https://img.shields.io/badge/OpenMP-26667F?style=for-the-badge\&logo=openmp\&logoColor=white)
 ![SIMD](https://img.shields.io/badge/SIMD-26667F?style=for-the-badge\&logo=simd\&logoColor=white)
-![CUDA](https://img.shields.io/badge/CUDA-26667F?style=for-the-badge\&logo=cuda\&logoColor=white)
+<--- ![CUDA](https://img.shields.io/badge/CUDA-26667F?style=for-the-badge\&logo=cuda\&logoColor=white)-->
 
 
 
