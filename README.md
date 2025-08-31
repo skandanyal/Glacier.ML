@@ -8,24 +8,6 @@
 ```
 ```Licensed for viewing only. Not open-source. See LICENSE.txt for details.```
 
-<!--- <details>
-<summary>📂 Repository Structure</summary>
-
-```plaintext
-Glacier/
-├── include/            # Header files (core logic)
-│   ├── core/
-│   └── utils/
-├── src/
-│   ├── core/
-│   └── utils/
-├── examples/
-├── tests/
-├── docs/
-└── README.md
-``` 
-</details> -->
-
 Glacier is a header-only library written in C++, which contains all the machine learning models, related tests and datasets required to build a machine learning project using C++.
 
 ![Status](https://img.shields.io/badge/Status-Work%20in%20Progress-yellow?style=for-the-badge&logo=github&logoColor=black)
