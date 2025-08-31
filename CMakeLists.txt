@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
 
-set(EIGEN_INCLUDE_DIR /home/skandan-c-y/cpp_libraries/eigen)                                      # eg: "D:/EigenLibrary/eigen-3.4.0"
-set(BOOST_INCLUDE_DIR /home/skandan-c-y/cpp_libraries/boost_1_88_0)
+set(EIGEN_INCLUDE_DIR __path_to_Eigen__)                          
+set(BOOST_INCLUDE_DIR __path_to_Boost__)
 
 # path until folder which contains bin
 include_directories(${EIGEN_INCLUDE_DIR})
