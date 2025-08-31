@@ -41,7 +41,10 @@ Glacier is a header-only library written in C++, which contains all the machine 
 ## Languages and Frameworks used:
 ![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge\&logo=c%2B%2B\&logoColor=white)
 ![Eigen](https://img.shields.io/badge/Eigen-1F1232?style=for-the-badge\&logo=matrix\&logoColor=white)
-![Boost](https://img.shields.io/badge/boost-1F1232?style=for-the-badge\&logo=code\&logoColor=white)
+![Boost](https://img.shields.io/badge/Boost-1F1232?style=for-the-badge\&logo=code\&logoColor=white)
+![OpenMP](https://img.shields.io/badge/OpenMP-26667F=for-the-badge\&logo=openai\&logoColor=white)
+![SIMD](https://img.shields.io/badge/SIMD-26667F=for-the-badge\&logo=amd\&logoColor=white)
+
 
 ## Repository structure:
 The repository contains the following models along with their implemtations and model specific workflow:
