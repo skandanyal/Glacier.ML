@@ -11,38 +11,18 @@
 #include <algorithm>
 #include <chrono>
 #include "omp.h"
-
-// errors and exits
-#define LOG_ERROR(x) std::cerr << "[ERROR] " << x << " Exiting program here... \n"; std::exit(EXIT_FAILURE);
-
-// deeper info to be used during development
-#define LOG_DEBUG(x, x_val) std::cout << "\033[35m[DEBUG] \033[0m" << x << ": " << x_val<< "\n"
-
-// high level info while users are using it
-#define LOG_INFO(x) std::cout << "\033[36m[INFO]  \033[0m" << x << "\n";
-
-// time taken
-#define LOG_TIME(task, duration) std::cout << "\033[32m[TIME]  \033[0m" << task << " took " << duration << " seconds. \n";
-
-// deeper info to be used during development
-#if DEBUG_MODE
-    #define LOG_DEBUG(x, x_val) std::cout << "\033[35m[DEBUG] \033[0m" << x << ": " << x_val<< "\n"
-#else
-    #define LOG_DEBUG(x, x_val)
-#endif
-
-// TODO - rewrite predict() using flat memory + OpenMP + avoid unnecessary sqrt → THEN compare benchmark → THEN move on.
+#include "logs.h"
 
 // constructor
 KNNClassifier::KNNClassifier(std::vector<std::vector<float> > &X_i, std::vector<std::string> &Y_i) {
-    std::cout << R"(
-         ██████╗ ██╗      █████╗  ██████╗██╗███████╗██████╗    ███╗   ███╗██╗
-        ██╔════╝ ██║     ██╔══██╗██╔════╝██║██╔════╝██╔══██╗   ████╗ ████║██║
-        ██║  ███╗██║     ███████║██║     ██║█████╗  ██████╔╝   ██╔████╔██║██║
-        ██║   ██║██║     ██╔══██║██║     ██║██╔══╝  ██╔══██╗   ██║╚██╔╝██║██║
-        ╚██████╔╝███████╗██║  ██║╚██████╗██║███████╗██║  ██║██╗██║ ╚═╝ ██║███████╗
-         ╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝╚══════╝
-    )" << std::endl;
+    // std::cout << R"(
+    //      ██████╗ ██╗      █████╗  ██████╗██╗███████╗██████╗    ███╗   ███╗██╗
+    //     ██╔════╝ ██║     ██╔══██╗██╔════╝██║██╔════╝██╔══██╗   ████╗ ████║██║
+    //     ██║  ███╗██║     ███████║██║     ██║█████╗  ██████╔╝   ██╔████╔██║██║
+    //     ██║   ██║██║     ██╔══██║██║     ██║██╔══╝  ██╔══██╗   ██║╚██╔╝██║██║
+    //     ╚██████╔╝███████╗██║  ██║╚██████╗██║███████╗██║  ██║██╗██║ ╚═╝ ██║███████╗
+    //      ╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝╚══════╝
+    // )" << std::endl;
 
     // check for the number of threads, cut it by two, and use those many
     int threads = omp_get_max_threads() / 2;
@@ -53,24 +33,17 @@ KNNClassifier::KNNClassifier(std::vector<std::vector<float> > &X_i, std::vector<
         LOG_ERROR("Input data cannot be empty.");
     }
 
-    //
+    // check for empty dataset
     for (auto &row : X_i)                                                                                  // Check if all the rows are of the same size
         if (row.size() != X_i[0].size()) {
             LOG_ERROR("Row sizes not consistent.");
         }
 
-//     // check for infinite values in the dataset
-// #pragma omp parallel for num_threads(threads)
-//     for (size_t i = 0; i < X_i.size(); i++) {
-//         for (size_t j = 0; j < X_i[i].size(); j++) {
-//             if (!std::isfinite(X_i[i][j]))
-//                 std::cout << "[BAD VALUE] X_i[" << i << "][" << j << "] = " << X_i[i][j]
-//                     << "\n";
-//         }
-//     }
-
     nrows = X_i.size();
     ncols = X_i[0].size();
+    LOG_DEBUG("Number of rows in x_train", X.size());
+    LOG_DEBUG("Number of cols in x_train", X[0].size());
+    std::cout << "\n";
 
     X.resize(nrows * ncols, 0.0);
     Y.resize(nrows);                                                                                      // use (nrows, 1) to ensure column vector
@@ -78,27 +51,27 @@ KNNClassifier::KNNClassifier(std::vector<std::vector<float> > &X_i, std::vector<
     for (size_t row = 0; row < nrows; row++)
         for (size_t col = 0; col < ncols; col++)
             X[row * ncols + col] = X_i[row][col];
-    LOG_DEBUG("Number of rows in x_train", X.size());
-    LOG_DEBUG("Number of cols in x_train", X[0].size());
-    std::cout << "\n";
 
+    // Classification specific block ahead -
     // check for infinite values - parallelized, SIMD
-    int bad_values = 0;
-#pragma omp parallel for simd reduction(+:bad_values)
-    for (size_t i = 0; i < nrows * ncols; i++) {
+    int bad_values_X = 0;
+#pragma omp parallel for default(none) \
+    shared(bad_values_X, nrows, ncols, X)
+    for (int i = 0; i < nrows * ncols; i++) {
         if (!std::isfinite(X[i]))
-            bad_values++;
-    } if (bad_values > 0) {
-        LOG_ERROR("Infinite values exist in the dataset.")
+            bad_values_X++;
+    } if (bad_values_X > 0) {
+        LOG_ERROR("Infinite values exist in the X dataset.")
     }
 
     // normalize X
     mean.resize(ncols, 0.0f);
-    std_dev.resize(ncols, 0.0f);;
+    std_dev.resize(ncols, 0.0f);
 
-    // TODO - optimize this block further by normalizing using the same element from the std_dev and mean vectors repeatedly
     // calculating mean and standard deviation for normalization
-#pragma omp parallel for
+#pragma omp parallel for \
+    default(none) \
+    shared(mean, std_dev, nrows, ncols, X)
     for (size_t colm = 0; colm < ncols; colm++) {
         float col_sum = 0.0f;
 #pragma omp simd reduction(+:col_sum)
@@ -117,7 +90,8 @@ KNNClassifier::KNNClassifier(std::vector<std::vector<float> > &X_i, std::vector<
     }
 
     // normalizing the dataset
-#pragma omp parallel for
+#pragma omp parallel for default(none) \
+    shared(mean, std_dev, nrows, ncols, X)
     for (size_t row = 0; row < nrows; row++) {
         for (size_t colm = 0; colm < ncols; colm++) {
             X[row * ncols + colm] = (X[row * ncols + colm] - mean[colm]) / std_dev[colm];
@@ -126,7 +100,7 @@ KNNClassifier::KNNClassifier(std::vector<std::vector<float> > &X_i, std::vector<
 
     // initialize Y
     std::map<std::string, bool> seen;
-    for (std::string target : Y_i)
+    for (const std::string& target : Y_i)
         seen[target] = true;
     for (auto &[key, _] : seen)
         labels.push_back(key);
@@ -137,11 +111,6 @@ KNNClassifier::KNNClassifier(std::vector<std::vector<float> > &X_i, std::vector<
 
     // multiclass classification by default
     std::ranges::sort(labels);
-
-    // for (size_t i = 0; i < Y_i.size(); i++)
-    //     for (int j = 0; j < labels.size(); j++)
-    //         if (Y_i[i] == labels[j])
-    //             Y[i] = j;
 
     std::map<std::string, int> indexing;
     for (int i = 0; i < labels.size(); i++)
@@ -179,103 +148,78 @@ void KNNClassifier::train(int k_i, std::string &distance_metric_i, int p_i) {
     auto train_end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(train_end - train_start);
 
-    LOG_TIME("Training", duration.count());
+    LOG_TIME("Training", duration.count() / 1000);
     LOG_INFO("Model training is complete.");
     std::cout << "\n";
 }
 
 std::string KNNClassifier::predict(std::vector<float> &x_pred) {
-    // put back the log here
-
     if (x_pred.size() != ncols) {
         LOG_ERROR("Train and test dataset have different number of features.");
     }
 
     ////////////////////// Prediction begins here //////////////////////
 
-    // normalize the vector first
-#pragma omp parallel for
+    // normalizing the prediction vector
+#pragma omp parallel for default(none) \
+    shared(x_pred, mean, std_dev)
     for (size_t col = 0; col < x_pred.size(); col++) {
         x_pred[col] = (x_pred[col] - mean[col]) / std_dev[col];
     }
 
-    // initialize the min_heap
-    MinHeap heap;
+    std::vector<std::pair<double, int>> least_distance(nrows);
 
-    switch (distance_metric) {
-        case 1: // Manhattan distance
-            for (size_t row = 0; row < X.size(); row++) {
-                double distance = 0;
-#pragma omp parallel for reduction(+:distance)
+    if (distance_metric > 3 || distance_metric < 1) {
+        LOG_ERROR("Distance metric is undefined.");
+    }
+
+#pragma omp parallel for default(none) \
+        shared(distance_metric, nrows, ncols, X, Y, x_pred, least_distance, p)
+    for (size_t row = 0; row < nrows; row++) {
+        double distance = 0.0;
+
+        switch (distance_metric) {
+            case 1: // Manhattan distance
+#pragma omp simd reduction(+:distance)
                 for (size_t col = 0; col < ncols; col++) {
                     distance += std::abs(X[row * ncols + col] - x_pred[col]);
                 }
-                LOG_DEBUG("Manhattan distance", std::to_string(distance));
-                std::pair<double, int> dist = {distance, Y[row]};
-
-                // push into a min heap
-                heap.push(dist);
-            }
-            break;
-
-            ///////////////////////////////////////////////////////////
-
-        case 2: // Euclidean distance
-            for (size_t row = 0; row < X.size(); row++) {
-                double data = 0.0f;
-
-#pragma omp parallel for reduction(+:data)
+                break;
+            case 2: // Euclidean distance
+#pragma omp simd reduction(+:distance)
                 for (size_t col = 0; col < ncols; col++) {
-                    data += X[row * ncols + col] - x_pred[col];
+                    float diff = X[row * ncols + col] - x_pred[col];
+                    distance += diff * diff;
                 }
-                LOG_DEBUG("Euclidean distance", std::to_string(distance));
-                std::pair<double, int> to_push = {data * data , Y[row]};
-
-                // push into a min heap
-                heap.push(to_push);
-            }
-            break;
-
-            //////////////////////////////////////////////////////////
-
-        case 3: // Minkowski distance
-            for (size_t row = 0; row < X.size(); row++) {
-                double distance = 0;
-
-#pragma omp parallel for reduction(+:distance)
+                distance = std::sqrt(distance);
+                break;
+            case 3: // Minkowski distance
+#pragma omp simd reduction(+:distance)
                 for (size_t col = 0; col < ncols; col++) {
-                    distance += std::pow(std::abs(X[row * ncols + col] - x_pred[col]), p);
+                    distance += static_cast<float>(std::pow(std::abs(X[row * ncols + col] - x_pred[col]), p));
                 }
-                LOG_DEBUG("Minkowski distance", std::to_string(distance));
-                std::pair<double, int> to_push = {distance, Y[row]};
-
-                // push into a min heap
-                heap.push(to_push);
-            }
-            break;
-
-            ////////////////////////////////////////////////////////
-
-        default:
-            LOG_ERROR("Unknown distance metric.");
+                distance = std::pow(distance, 1.0/p);
+                break;
+            default:
+                continue;
+        }
+        least_distance[row] = {distance, Y[row]};
     }
 
-    // voting to find the most frequently occurring target among the nearest k neighbours
-    std::unordered_map<std::string, size_t> voting;
-    for (int i = 0; i < labels.size(); i++)
-        voting[labels[i]] = 0;
+    // finding the k-th element
+    std::ranges::nth_element(least_distance, least_distance.begin() + k);
 
-    for (int row = 0; row < k; row++) {
-        voting[labels[heap.top()]]++;
-        heap.pop();
+    // voting
+    std::unordered_map<std::string, int> voting;
+    for (size_t i=0; i<k; i++) {
+        voting[labels[least_distance[i].second]]++;
     }
-
     std::string answer;
-    size_t highest = 0;
-    for (auto &[label, vote] : voting) {
-        if (vote > highest) {
-            highest = vote;
-            answer = label;
+    int highest_vote = 0;
+    for (const auto &thing : voting) {
+        if (thing.second > highest_vote) {
+            highest_vote = thing.second;
+            answer = thing.first;
         }
     }
 
@@ -285,14 +229,11 @@ std::string KNNClassifier::predict(std::vector<float> &x_pred) {
 }
 
 std::vector<std::string> KNNClassifier::predict(std::vector<std::vector<float>> &x_pred) {
-    LOG_INFO("Block prediction initiated...");
-
     if (x_pred[0].size() != ncols) {
         LOG_ERROR("Train and test dataset have different number of features.");
     }
 
     size_t Nrows = x_pred.size();
-    size_t Ncols = x_pred[0].size();
 
     LOG_DEBUG("Number of rows in X_test", Nrows);
     LOG_DEBUG("Number of columns in X_test", Ncols);

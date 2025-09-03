@@ -12,14 +12,16 @@
 
 class KNNRegressor {
 private:
-    std::vector<std::vector<float>> X;      // (n x p)
-    std::vector<float> Y;                   // (n x 1)
+    std::vector<float> X;      // (n x p)
+    std::vector<float> Y;                     // (n x 1)
+    std::vector<std::string> labels;        // (p x 1)
     // std::pair<double, float> Dist;
     std::vector<float> mean;                // (p x 1)
     std::vector<float> std_dev;             // (p x 1)
     int distance_metric{};
     int k{};
     int p{};
+    size_t nrows, ncols;
     // the {} braces are for the constructor to initialize these variables outside the constructor
 
 public:
@@ -31,7 +33,7 @@ public:
     void analyze(std::vector<std::vector<float>> &x_test, std::vector<float> &y_test);
 
 private:
-    float R2_score(std::vector<float> &actual, std::vector<float> &predicted);
+    static float R2_score(std::vector<float> &actual, std::vector<float> &predicted);
 };
 
 #endif //KNNREGRESSORFLOW_H

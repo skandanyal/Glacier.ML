@@ -9,17 +9,9 @@
 #include <boost/math/distributions/students_t.hpp>
 #include "SimpleLinearRegressionFlow.h"
 #include "utilities.h"
+#include "logs.h"
 
-#define LOG_ERROR(x) std::cerr << "[ERROR] " << x << " Exiting program here... \n"; std::exit(EXIT_FAILURE);		// errors and exits
-#define LOG_DEBUG(x, x_val) std::cout << "\033[35m[DEBUG] \033[0m" << x << ": " << x_val<< "\n"							// deeper info to be used during development
-#define LOG_INFO(x) std::cout << "\033[36m[INFO]  \033[0m" << x << "\n";												// high level info while users are using it
-#define LOG_TIME(task, duration) std::cout << "\033[32m[TIME]  \033[0m" << task << " took " << duration << " nanooseconds. \n";					// time taken
 
-#if DEBUG_MODE
-	#define LOG_DEBUG(x, x_val) std::cout << "\033[35m[DEBUG] \033[0m" << x << ": " << x_val<< "\n"							// deeper info to be used during development
-#else
-	#define LOG_DEBUG(x, x_val)
-#endif
 
 // constructor
 Simple_Linear_Regression::Simple_Linear_Regression(std::vector<float> &x, std::vector<float> &y) {
@@ -55,17 +47,6 @@ void Simple_Linear_Regression::train() {
 
 
 float Simple_Linear_Regression::calculate_m() {
-	// float ssx = 0.0, ssxy = 0.0;
-	//
-	// for(int i=0; i<n; i++) {
-	// 	ssx += x[i] * x[i];
-	// 	ssxy += x[i] * y[i];
-	// }
-	//
-	// float numer = n * ssxy - sum_x * sum_y;
-	// float denr = n * ssx - sum_x * sum_x;
-	// return numer / denr;
-
 	float x_mean = sum_x / n;
 	float y_mean = sum_y / n;
 
@@ -106,7 +87,7 @@ void Simple_Linear_Regression::analyze(std::vector<float> &x_test, std::vector<f
 		LOG_ERROR("Test size does not match.");
 	}
 
-	x_test_size = x_test.size(), x_test_mean = Utils::mean(x_test);
+	x_test_size = (float) x_test.size(), x_test_mean = Utils::mean(x_test);
 	float mse = 0.0, rmse = 0.0, mae = 0.0, mape = 0.0;
 	float rss = 0.0, sse_x = 0.0;																						// rss - residual sum of squares
 	// sse_x - sum of squares of errors in x

@@ -1,16 +1,9 @@
 #include "MultipleLinearRegressionFlow.h"
 #include <iostream>
 #include <chrono>
+#include "logs.h"
 
-#define LOG_INFO(x) std::cout << "\033[36m[INFO]  \033[0m" << x << "\n";                                                // high level info while users are using it
-#define LOG_ERROR(x) std::cout << "[ERROR] " << x << " Exiting program here... \n"; std::exit(EXIT_FAILURE);            // errors and exits
-#define LOG_TIME(task, duration) std::cout << "\033[32m[TIME]  \033[0m" << task << " took " << duration << " milliseconds. \n";         // time taken
 
-#if DEBUG_MODE
-    #define LOG_DEBUG(x, xval) std::cout << "\033[35m[DEBUG] \033[0m" << x << ": " << xval << "\n";                     // deeper into to be used during development
-#else
-    #define LOG_DEBUG(x)
-#endif
 
 // constructor
 Multiple_Linear_Regression::Multiple_Linear_Regression(std::vector<std::vector<float>> &X_i, std::vector<float> &Y_i) : X(), Y(), Beta(), E() {
