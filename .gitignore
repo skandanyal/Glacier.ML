@@ -1,7 +1,7 @@
 cmake-build-debug/
 cmake-build-resease/
 main.cpp
-CMakeLists.txt
+GrandCMakeLists.txt
 out
 cmake-build-*/
 build/
