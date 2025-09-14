@@ -1,2 +1,8 @@
 cmake-build-debug/
+cmake-build-resease/
 main.cpp
+CMakeLists.txt
+out
+cmake-build-*/
+build/
+Latex_things/

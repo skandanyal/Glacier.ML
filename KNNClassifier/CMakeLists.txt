@@ -23,7 +23,6 @@ add_executable(KNNC
         KNNClassifier/KNNRegressorFlow.h
         KNNClassifier/KNNRegressorImplementation.cpp
         KNNClassifierREADME.md
-        min_heap.hpp
         Utils/utilities.h
         Utils/utilities.cpp
 )

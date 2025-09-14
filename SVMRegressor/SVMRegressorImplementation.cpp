@@ -1,9 +1,13 @@
 //
+// Created by skandan-c-y on 9/14/25.
+//
+
+//
 // Created by skandan-c-y on 7/22/25.
 //
 
 #include <algorithm>
-#include "KNNRegressorFlow.h"
+#include "SVMRegressorFlow.hpp"
 #include <chrono>
 #include <iostream>
 #include <numeric>
@@ -11,7 +15,7 @@
 #include "logs.h"
 
 // constructor
-KNNRegressor::KNNRegressor(std::vector<std::vector<float>> &X_i, std::vector<float> &Y_i) {
+SVMRegressor::SVMRegressor(std::vector<std::vector<float>> &X_i, std::vector<float> &Y_i) {
     // std::cout << R"(
     //        ██████╗ ██╗      █████╗  ██████╗██╗███████╗██████╗    ███╗   ███╗██╗
     //       ██╔════╝ ██║     ██╔══██╗██╔════╝██║██╔════╝██╔══██╗   ████╗ ████║██║
@@ -106,23 +110,12 @@ KNNRegressor::KNNRegressor(std::vector<std::vector<float>> &X_i, std::vector<flo
     std::cout << "\n";
 }
 
-void KNNRegressor::train(int k_i, const std::string &distance_metric_i, int p_i) {
+void SVMRegressor::train(int k_i, const std::string &distance_metric_i, int p_i) {
       auto train_start = std::chrono::high_resolution_clock::now();
 
     ////////////////////// Training begins here //////////////////////
 
-    k = k_i;
 
-    if (distance_metric_i == "Manhattan")
-        distance_metric = 1;
-    else if (distance_metric_i == "Euclidean")
-        distance_metric = 2;
-    else if (distance_metric_i == "Minkowski") {
-        distance_metric = 3;
-        p = p_i;
-    } else {
-        LOG_ERROR("Unknown distance metric.");
-    }
 
     ////////////////////// Training ends here ////////////////////////
 
@@ -134,7 +127,7 @@ void KNNRegressor::train(int k_i, const std::string &distance_metric_i, int p_i)
     std::cout << "\n";
 }
 
-float KNNRegressor::predict(std::vector<float> &x_pred) {
+float SVMRegressor::predict(std::vector<float> &x_pred) {
     LOG_INFO("Singular prediction initiated...");
 
     if (x_pred.size() != nrows) {
@@ -143,67 +136,11 @@ float KNNRegressor::predict(std::vector<float> &x_pred) {
 
     ////////////////////// Prediction begins here //////////////////////
 
-    // normalizing the prediction vector
-#pragma omp parallel for default(none) \
-shared(x_pred, mean, std_dev) \
-private(col)
-    for (size_t col = 0; col < x_pred.size(); col++) {
-        x_pred[col] = (x_pred[col] - mean[col]) / std_dev[col];
-    }
-
-    std::vector<std::pair<double, float>> least_distance(nrows);
-
-#pragma omp parallel for default(none) \
-private(row, col, distance) \
-shared(distance_metric, nrows, ncols, X, Y, x_pred, least_distance, p)
-    for (size_t row = 0; row < nrows; row++) {
-        double distance = 0.0;
-
-        switch (distance_metric) {
-            case 1: // Manhattan distance
-#pragma omp simd reduction(+:distance)
-                for (size_t col = 0; col < ncols; col++) {
-                    distance += std::abs(X[row * ncols + col] - x_pred[col]);
-                }
-                break;
-            case 2: // Euclidean distance
-#pragma omp simd reduction(+:distance)
-                for (size_t col = 0; col < ncols; col++) {
-                    float diff = X[row * ncols + col] - x_pred[col];
-                    distance += diff * diff;
-                }
-                distance = std::sqrt(distance);
-                break;
-            case 3: // Minkowski distance
-#pragma omp simd reduction(+:distance)
-                for (size_t col = 0; col < ncols; col++) {
-                    distance += static_cast<float>(std::pow(std::abs(X[row * ncols + col] - x_pred[col]), p));
-                }
-                distance = std::pow(distance, 1.0/p);
-                break;
-            default:
-                LOG_ERROR("Unknown distance metric.");
-        }
-        least_distance[row] = {distance, Y[row]};
-    }
-
-    // finding the k-th element
-    std::ranges::nth_element(least_distance, least_distance.begin() + k);
-
-    // averaging
-    float answer = 0.0f;
-#pragma omp parallel simd reduction(+:answer) default(none)\
-    shared(answer)
-    for (size_t row = 0; row < k; row++) {
-        answer += least_distance[row].second;
-    }
-
-    return answer / (float) k;
 
     ////////////////////// Prediction ends here //////////////////////
 }
 
-std::vector<float> KNNRegressor::predict(std::vector<std::vector<float>> &x_pred) {
+std::vector<float> SVMRegressor::predict(std::vector<std::vector<float>> &x_pred) {
     if (x_pred[0].size() != ncols) {
         LOG_ERROR("Train and test dataset have different number of features.");
     }
@@ -226,7 +163,7 @@ std::vector<float> KNNRegressor::predict(std::vector<std::vector<float>> &x_pred
     ////////////////////// Prediction ends here //////////////////////
 }
 
-void KNNRegressor::print_predict(std::vector<std::vector<float>> &x_pred, std::vector<float> &y_pred) {
+void SVMRegressor::print_predict(std::vector<std::vector<float>> &x_pred, std::vector<float> &y_pred) {
     std::vector<float> y_test = predict(x_pred);
 
     std::cout << "Predicted\t|\tActual\n";
@@ -236,7 +173,7 @@ void KNNRegressor::print_predict(std::vector<std::vector<float>> &x_pred, std::v
     std::cout << "\n";
 }
 
-float KNNRegressor::R2_score(std::vector<float>& actual, std::vector<float>& predicted) {
+float SVMRegressor::R2_score(std::vector<float>& actual, std::vector<float>& predicted) {
     float mean_y = 0;
 #pragma omp parallel for simd reduction(+=mean_y)
     for (int i=0; i<actual.size(); i++) {
@@ -254,7 +191,7 @@ float KNNRegressor::R2_score(std::vector<float>& actual, std::vector<float>& pre
 }
 
 
-void KNNRegressor::analyze(std::vector<std::vector<float>> &x_test, std::vector<float> &y_test) {
+void SVMRegressor::analyze(std::vector<std::vector<float>> &x_test, std::vector<float> &y_test) {
     if (x_test[0].size() != y_test.size()) {
         LOG_ERROR("Test size does not match.");
     }

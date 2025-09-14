@@ -1,9 +1,8 @@
 //
-// Created by skandan-c-y on 7/14/25.
+// Created by skandan-c-y on 9/14/25.
 //
 
-#include "KNNClassifierFlow.h"
-#include "min_heap.hpp"
+#include "SVMCLassifierFlow.hpp"
 #include <iostream>
 #include <cmath>
 #include <map>
@@ -14,7 +13,7 @@
 #include "logs.h"
 
 // constructor
-KNNClassifier::KNNClassifier(std::vector<std::vector<float> > &X_i, std::vector<std::string> &Y_i) {
+SVMClassifier::SVMClassifier(std::vector<std::vector<float> > &X_i, std::vector<std::string> &Y_i) {
     // std::cout << R"(
     //      ██████╗ ██╗      █████╗  ██████╗██╗███████╗██████╗    ███╗   ███╗██╗
     //     ██╔════╝ ██║     ██╔══██╗██╔════╝██║██╔════╝██╔══██╗   ████╗ ████║██║
@@ -135,27 +134,12 @@ KNNClassifier::KNNClassifier(std::vector<std::vector<float> > &X_i, std::vector<
     std::cout << "\n";
 }
 
-void KNNClassifier::train(int k_i, std::string &distance_metric_i, int p_i) {
+void SVMClassifier::train(int k_i, std::string &distance_metric_i, int p_i) {
     auto train_start = std::chrono::high_resolution_clock::now();
 
     ////////////////////// Training begins here //////////////////////
 
-    if (k_i % 2 == 0) k = k_i - 1; // always store an odd value of k
-    else k = k_i;
 
-    if (distance_metric_i == "manhattan")
-        distance_metric = 1;
-    else if (distance_metric_i == "euclidean")
-        distance_metric = 2;
-    else if (distance_metric_i == "minkowski") {
-        distance_metric = 3;
-        p = p_i;
-    } else {
-        LOG_ERROR("Unknown distance metric.");
-    }
-    LOG_DEBUG("Distance metric", distance_metric_i);
-    LOG_DEBUG("K", k);
-    LOG_UPDATE("Hyperparameters set. ");
 
     ////////////////////// Training ends here ////////////////////////
 
@@ -167,82 +151,20 @@ void KNNClassifier::train(int k_i, std::string &distance_metric_i, int p_i) {
     std::cout << "\n";
 }
 
-std::string KNNClassifier::predict(std::vector<float> &x_pred) {
+std::string SVMClassifier::predict(std::vector<float> &x_pred) {
     if (x_pred.size() != ncols) {
         LOG_ERROR("Train and test dataset have different number of features.");
     }
 
     ////////////////////// Prediction begins here //////////////////////
 
-    // normalizing the prediction vector
-#pragma omp parallel for default(none) \
-    shared(x_pred, mean, std_dev)
-    for (size_t col = 0; col < x_pred.size(); col++) {
-        x_pred[col] = (x_pred[col] - mean[col]) / std_dev[col];
-    }
-
-    std::vector<std::pair<double, int>> least_distance(nrows);
-
-    if (distance_metric > 3 || distance_metric < 1) {
-        LOG_ERROR("Distance metric is undefined.");
-    }
-
-#pragma omp parallel for default(none) \
-        shared(distance_metric, nrows, ncols, X, Y, x_pred, least_distance, p)
-    for (size_t row = 0; row < nrows; row++) {
-        double distance = 0.0;
-
-        switch (distance_metric) {
-            case 1: // Manhattan distance
-#pragma omp simd reduction(+:distance)
-                for (size_t col = 0; col < ncols; col++) {
-                    distance += std::abs(X[row * ncols + col] - x_pred[col]);
-                }
-                break;
-            case 2: // Euclidean distance
-#pragma omp simd reduction(+:distance)
-                for (size_t col = 0; col < ncols; col++) {
-                    float diff = X[row * ncols + col] - x_pred[col];
-                    distance += diff * diff;
-                }
-                distance = std::sqrt(distance);
-                break;
-            case 3: // Minkowski distance
-#pragma omp simd reduction(+:distance)
-                for (size_t col = 0; col < ncols; col++) {
-                    distance += static_cast<float>(std::pow(std::abs(X[row * ncols + col] - x_pred[col]), p));
-                }
-                distance = std::pow(distance, 1.0/p);
-                break;
-            default:
-                continue;
-        }
-        least_distance[row] = {distance, Y[row]};
-    }
-
-    // finding the k-th element
-    std::ranges::nth_element(least_distance, least_distance.begin() + k);
-
-    // voting
-    std::unordered_map<std::string, int> voting;
-    for (size_t i=0; i<k; i++) {
-        voting[labels[least_distance[i].second]]++;
-    }
-    std::string answer;
-    int highest_vote = 0;
-    for (const auto &thing : voting) {
-        if (thing.second > highest_vote) {
-            highest_vote = thing.second;
-            answer = thing.first;
-        }
-    }
 
     ////////////////////// Prediction ends here //////////////////////
 
     return answer;
 }
 
-std::vector<std::string> KNNClassifier::predict(std::vector<std::vector<float>> &x_pred) {
+std::vector<std::string> SVMClassifier::predict(std::vector<std::vector<float>> &x_pred) {
     if (x_pred[0].size() != ncols) {
         LOG_ERROR("Train and test dataset have different number of features.");
     }
@@ -272,84 +194,21 @@ std::vector<std::string> KNNClassifier::predict(std::vector<std::vector<float>> 
 
     // ==============================================================================
 
-//     // convert into a 1d matrix, normalize in the same block, calculate the nearest distance
-//     std::vector<float> x_here(Nrows * Ncols ,0.0f);                                    // x_pred in 1d
-//     std::vector<std::pair<double, int>> least_distance(nrows * Nrows, {0.0f, 0});   // least distances
-//
-//     for (int i = 0; i < Nrows; i++) {
-//         for (int j = 0; j < Ncols; j++) {
-//             x_here[i * Ncols + j] = X[i * Ncols + j] - (x_pred[i][j] - mean[j]) / std_dev[j];
-//         }
-//     }
-//
-//     if (distance_metric > 3 || distance_metric < 1) {
-//         LOG_ERROR("Distance metric is undefined.");
-//     }
-//
-// #pragma omp parallel for default(none) \
-//         shared(distance_metric, nrows, ncols, X, Y, x_pred, least_distance, p)
-//     for (size_t row = 0; row < nrows; row++) {
-//         double distance = 0.0;
-//
-//         switch (distance_metric) {
-//             case 1: // Manhattan distance
-// #pragma omp simd reduction(+:distance)
-//                 for (size_t col = 0; col < ncols; col++) {
-//                     distance += std::abs(X[row * ncols + col] - x_pred[col]);
-//                 }
-//                 break;
-//             case 2: // Euclidean distance
-// #pragma omp simd reduction(+:distance)
-//                 for (size_t col = 0; col < ncols; col++) {
-//                     float diff = X[row * ncols + col] - x_pred[col];
-//                     distance += diff * diff;
-//                 }
-//                 distance = std::sqrt(distance);
-//                 break;
-//             case 3: // Minkowski distance
-// #pragma omp simd reduction(+:distance)
-//                 for (size_t col = 0; col < ncols; col++) {
-//                     distance += static_cast<float>(std::pow(std::abs(X[row * ncols + col] - x_pred[col]), p));
-//                 }
-//                 distance = std::pow(distance, 1.0/p);
-//                 break;
-//             default:
-//                 continue;
-//         }
-//         least_distance[row] = {distance, Y[row]};
-//     }
-//
-//     // finding the k-th element
-//     std::ranges::nth_element(least_distance, least_distance.begin() + k);
-//
-//     // voting
-//     std::unordered_map<std::string, int> voting;
-//     for (size_t i=0; i<k; i++) {
-//         voting[labels[least_distance[i].second]]++;
-//     }
-//     std::string answer;
-//     int highest_vote = 0;
-//     for (const auto &thing : voting) {
-//         if (thing.second > highest_vote) {
-//             highest_vote = thing.second;
-//             answer = thing.first;
-//         }
-//     }
-//
 //     return result;
 }
 
-void KNNClassifier::print_predict(std::vector<std::vector<float>> &x_pred, std::vector<std::string> &y_pred) {
+void SVMClassifier::print_predict(std::vector<std::vector<float>> &x_pred, std::vector<std::string> &y_pred) {
     std::vector<std::string> y_test = predict(x_pred);
 
     std::cout << "Predicted\t|\tActual\n";
     for (int i = 0; i < y_test.size(); i++) {
         std::cout << y_test[i] << "\t|\t" << y_pred[i] << "\n";
     }
+
     std::cout << "\n";
 }
 
-void KNNClassifier::analyze_2_targets(std::vector<std::vector<float>> &x_test, std::vector<std::string> &y_test) {
+void SVMClassifier::analyze_2_targets(std::vector<std::vector<float>> &x_test, std::vector<std::string> &y_test) {
     LOG_INFO("Analysis initiated...");
     std::vector<std::string> y_pred = predict(x_test);
 

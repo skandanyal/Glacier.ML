@@ -1,14 +1,15 @@
 //
-// Created by skandan-c-y on 7/14/25.
+// Created by skandan-c-y on 9/14/25.
 //
-
-#ifndef KNNCLASSIFIERFLOW_H
-#define KNNCLASSIFIERFLOW_H
+#pragma once
 
 #include <vector>
 #include <string>
 
-class KNNClassifier {
+#ifndef SVMCLASSIFIERFLOW_HPP
+#define SVMCLASSIFIERFLOW_HPP
+
+class SVMClassifier {
 private:
     std::vector<float> X;      // (n x p)
     std::vector<int> Y;                     // (n x 1)
@@ -23,7 +24,7 @@ private:
     // the {} braces are for the constructor to initialize these variables outside the constructor
 
 public:
-    KNNClassifier(std::vector<std::vector<float>> &x, std::vector<std::string> &y);
+    SVMClassifier(std::vector<std::vector<float>> &x, std::vector<std::string> &y);
     void train(int k, std::string& distance_metric, int p=2);
     std::string predict(std::vector<float> &x_pred);
     std::vector<std::string> predict(std::vector<std::vector<float>>& x_test);
@@ -32,4 +33,4 @@ public:
     void analyze_2_targets(std::vector<std::vector<float>> &x_test, std::vector<std::string> &y_test);
 };
 
-#endif //KNNCLASSIFIERFLOW_H
+#endif //SVMCLASSIFIERFLOW_HPP
