@@ -6,3 +6,4 @@ out
 cmake-build-*/
 build/
 Latex_things/
+.idea/
