@@ -57,9 +57,6 @@ add_executable(KNNR
 target_compile_definitions(KNNR PRIVATE DEBUG_MODE=1)
 
 add_executable(KNNC
-        KNNClassifier/KNNClassifierExample.cpp
-        KNNClassifier/KNNClassifierFlow.h
-        KNNClassifier/KNNClassifierImplementation.cpp
         Utils/utilities.h
         Utils/utilities.cpp
 )

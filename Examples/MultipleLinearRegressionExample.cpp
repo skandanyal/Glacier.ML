@@ -1,22 +1,20 @@
 #include <iostream>
-#include "../Models/MultipleLinearRegression.hpp"
-#include "utilities.hpp"
+#include "../Glacier/Models/MultipleLinearRegression.hpp"
+#include "../Glacier/Utils/utilities.hpp"
 
-// void print_dataset_details() {
-//     std::string description = "X1: Square feet\nX2: Number of bedrooms\n3:Distance to City Centre\nX4:Age of house (years)\n";
-// }
+
 
 int main() {
 
     std::vector<std::vector<float>> x_train, x_test;
     std::vector<float> y_train, y_test;
 
-    Utils::read_csv("../Datasets/Regression_datasets/train_sample_1.csv", x_train, y_train, true);
-    Utils::read_csv("../Datasets/Regression_datasets/test_sample_1.csv", x_test, y_test, true);
+    Glacier::Utils::read_csv(__path_to_training_dataset__, x_train, y_train, true);
+    Glacier::Utils::read_csv(__path_to_test_dataset__, x_test, y_test, true);
 
 
     // Multiple Linear Regression Workflow
-    Multiple_Linear_Regression iceberg(x_train, y_train);							                                // initialize a model object
+    Glacier::Multiple_Linear_Regression iceberg(x_train, y_train);							                                // initialize a model object
     iceberg.train();											                                                        // train the model
 
     iceberg.print_Rcoeff_values();									                                                    // print the coefficient values
