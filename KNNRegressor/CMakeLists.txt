@@ -20,17 +20,16 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=native -ffast-math -fopt-info
 find_package(OpenMP REQUIRED)
 find_package(BLAS REQUIRED)
 
-add_executable(MLR
-        Multiple_Linear_Regression/MultipleLinearRegression.h
-        Multiple_Linear_Regression/MultipleLinearRegressionImplementation.cpp
-        Multiple_Linear_Regression/MultipleLinearRegressionExample.cpp
+add_executable(KNNR
+        KNNRegressor/KNNRegressorExample.cpp
+        KNNRegressor/KNNRegressorFlow.h
+        KNNRegressor/KNNRegressorImplementation.cpp
         Utils/utilities.h
         Utils/utilities.cpp
 )
-target_compile_definition(MLR PRIVATE DEBUG_MODE=1)
+target_compile_definitions(KNNR PRIVATE DEBUG_MODE=1)
 
 # Link BLAS to the targets
 if(BLAS_FOUND)
-    target_link_libraries(MLR PUBLIC BLAS::BLAS)
+    target_link_libraries(KNNR PUBLIC BLAS::BLAS)
 endif()
-
