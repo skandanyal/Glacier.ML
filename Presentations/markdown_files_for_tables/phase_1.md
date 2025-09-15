@@ -41,8 +41,8 @@
 |      Tools      |              Purpose              |
 |:---------------:|:---------------------------------:|
 | Version control |          Git and GitHub           |
-|  Build System   |         Cmake and PyCharm         |
-|       IDE       |               CLion               |
+|  Build System   |               Cmake               |
+|       IDE       |         CLion and PyCharm         |
 |     Server      | Golang with Gin or Echo framework |
 |    Profiling    |               Perf                |
 |     Testing     |               GTest               |
@@ -54,7 +54,7 @@
 |      Memory      |           Minimum 4 GB RAM, 8 GB recommended           |
 | Any other device |                  Standard PC / Laptop                  | 
 
-## Literature survey
+## Literature survey - i
 | Sl no. |                                         Title                                          |           Authors           | Year of publication |
 |:------:|:--------------------------------------------------------------------------------------:|:---------------------------:|:-------------------:|
 |   1.   |     A Survey on Machine Learning Accelerators and Evolutionary Hardware Platforms      | Sathwika Bavikadi<br>et al. |        2022         |  
@@ -63,5 +63,25 @@
 |   4.   |       Importance of Explicit Vectorization for CPU and GPU Software Performance        |  Neil G Dickson<br>et al.   |        2010         |  
 |   5.   |                                   MLPACK: A Scalable                                   |                             |                     |
 
+## Literature survey - ii
+| Sl no. |                                                      Title                                                      |            Authors            | Year of publication |
+|:------:|:---------------------------------------------------------------------------------------------------------------:|:-----------------------------:|:-------------------:|
+|   1.   |      Optimization Of KNN, SVM, And SVM Kernel in Water Potability Prediction with Hyperparameter Approach       | Roy Hendro Siburian<br>et al. |        2025         |
+|   2.   |               Ensemble-based Machine Learning and Deep Learning Approaches for Autism Prediction                |   Dr.K.Suthendran<br>et al.   |        2025         |
+|   3.   |    Simulation of Hierarchical Parallel Computing Model for Fluid Machinery Based on Support Vector Machines     |     Dechen Wei<br>et al.      |        2023         |
+|   4.   | Design and Implementation of Parallel Processing Algorithm for Big Data in High Performance Computing Framework |     Qihao Dong<br>et al.      |        2023         |
+|   5.   |                       Comparative Analysis Of Optimization Techniques On Multi-class SVM                        |  Neha J Deshpande<br>et al.   |        2022         |
+|   6.   |                          Performance portable Vlasov code with C++ parallel algorithm                           |    Yuuichi Asahi<br>et al.    |        2022         |
+
+### Observations
+1. Modern HPC applications have been abstracted by Python.
+2. Could not find papers on optimizing Supervised ML algorithms in the last 5 years on IEEE Xtreme.
+3. Algorithmic optimization trends are appearing more in applications in edge devices
+
+### Try to learn about:
+1. OpenMPI
+2. MapReduce method
+
+## Next steps
 time and memory benchmarks, algorithmic improvements
 add newer research papers 
