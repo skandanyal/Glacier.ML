@@ -384,4 +384,4 @@ void analyze_2_targets(std::vector<std::vector<float>> &x_test, std::vector<std:
 //     return result;
 // }
 
-#endif KNNCLASSIFIER_HPP
+#endif //KNNCLASSIFIER_HPP

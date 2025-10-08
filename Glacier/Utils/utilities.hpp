@@ -123,4 +123,4 @@ inline double Glacier::Utils::get_p_value(double t_stat, int dof) {
 }
 
 
-#endif UTILITIES_HPP
+#endif //UTILITIES_HPP

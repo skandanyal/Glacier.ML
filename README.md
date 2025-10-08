@@ -26,6 +26,7 @@ Glacier is a header-only library written in C++, which contains all the machine 
 ![Eigen](https://img.shields.io/badge/Eigen-1F1232?style=for-the-badge\&logo=matrix\&logoColor=white)
 ![Boost](https://img.shields.io/badge/Boost-1F1232?style=for-the-badge\&logo=code\&logoColor=white)
 ![OpenMP](https://img.shields.io/badge/OpenMP-26667F?style=for-the-badge\&logo=openmp\&logoColor=white)
+![OpenBLAS](https://img.shields.io/badge/OpenBLAS-E00?style=for-the-badge\&logo=openblas\&logoColor=white)
 
 *Development and Profiling:*       
 ![CMake](https://img.shields.io/badge/CMake-06466B?style=for-the-badge\&logo=cmake\&logoColor=white)
@@ -33,18 +34,21 @@ Glacier is a header-only library written in C++, which contains all the machine 
 
 *Planned for furute integration:*        
 ![GTest](https://img.shields.io/badge/GTest-00BF63?style=for-the-badge\&logo=googletest\&logoColor=white)
-![OpenBLAS](https://img.shields.io/badge/OpenBLAS-E00?style=for-the-badge\&logo=openblas\&logoColor=white)
 
 
+## If using Windows:
+Use this block of code in the beginning of working file to enable ANSI colour logging in Windows terminal:
+```
+#ifdef _WIN32           
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	DWORD dwMode = 0;
+	GetConsoleMode(hOut, &dwMode);
+	dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+	SetConsoleMode(hOut, dwMode);
+#endif
+```
 
-## Repository structure:
-The repository contains the following models along with their implemtations and model specific workflow:
-* Simple Linear Regression
-* Multiple Linear Regression
-* Bivariate Logistic Regression
-* KNN Regression
-* KNN Classifier
   
-### Models benchmarked so far:
+## Models benchmarked so far:
 * Logistic Regression
 * KNN Classifier

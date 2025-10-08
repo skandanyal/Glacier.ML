@@ -350,4 +350,4 @@ inline float Glacier::Logistic_Regression::sigmoid(float x) {
     return 1 / (1 + std::exp(-1 * y));
 }
 
-#endif LOGISTICREGRESSION_HPP
+#endif //LOGISTICREGRESSION_HPP

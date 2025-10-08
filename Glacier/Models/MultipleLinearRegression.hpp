@@ -216,7 +216,7 @@ inline void Glacier::Multiple_Linear_Regression::analyze(std::vector<std::vector
 
 // t-test is for testing individual params, f-test is for testing the entire model
 
-#endif MULTIPLELINEARREGRESSION_HPP
+#endif //MULTIPLELINEARREGRESSION_HPP
 
 /*
  * TEMPLATE:

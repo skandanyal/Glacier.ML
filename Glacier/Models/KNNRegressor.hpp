@@ -11,6 +11,8 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include <iostream>
+
 #include "omp.h"
 #include "../Utils/logs.hpp"
 #include "../min_heap.hpp"
@@ -317,4 +319,4 @@ inline void KNNRegressor::analyze(std::vector<std::vector<float>> &x_test, std::
     std::cout << "MAPE: " << mape << "\n";
 }
 
-#endif KNNREGRESSOR_HPP
+#endif //KNNREGRESSOR_HPP

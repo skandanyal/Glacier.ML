@@ -223,7 +223,7 @@ inline std::vector<float> Glacier::Simple_Linear_Regression::predict(const std::
 	return result;
 }
 
-#endif SIMPLELINEARREGRESSION_HPP
+#endif //SIMPLELINEARREGRESSION_HPP
 
 
 // /* TEMPLATE:

@@ -22,4 +22,4 @@
     #define LOG_DEBUG(x, x_val);
 #endif
 
-#endif LOGS_HPP
+#endif //LOGS_HPP

@@ -6,14 +6,7 @@
 #include <windows.h>
 #endif
 
-#ifdef _WIN32
-	// Enable ANSI color in Windows terminal
-	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	DWORD dwMode = 0;
-	GetConsoleMode(hOut, &dwMode);
-	dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-	SetConsoleMode(hOut, dwMode);
-#endif
+
 
 
 int main() {
