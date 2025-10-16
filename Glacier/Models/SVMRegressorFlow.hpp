@@ -11,30 +11,34 @@
 #include <chrono>
 #include <iostream>
 #include <numeric>
+#include <random>
+#include <algorithm>
+#include <cblas.h>
 #include <Eigen/Dense>
 
 #include "Utils/logs.hpp"
 #include "Utils/utilities.hpp"
 
 class SVMRegressor {
-private:
-    Eigen::MatrixXf X;      // (n x p)
-    Eigen::VectorXf Y;                     // (n x 1)
-    Eigen::VectorXf mean;                // (p x 1)
-    Eigen::VectorXf std_dev;             // (p x 1)
-    Eigen::Index nrows{}, ncols{};
     // the {} braces are for the constructor to initialize these variables outside the constructor
+    Eigen::MatrixXf X;                      // (n x p)
+    Eigen::VectorXf Y;                      // (n x 1)
+    Eigen::VectorXf mean;                   // (p x 1)
+    Eigen::VectorXf std_dev;                // (p x 1)
+    Eigen::Index nrows{}, ncols{};
+    Eigen::VectorXf w;
+    std::vector<size_t> indices;
 
 public:
     SVMRegressor(std::vector<std::vector<float>> &x_i, std::vector<float> &y_i);
-    void train(float lambda, int epochs);
+    void train(float lambda, float epsilon, int epochs);
     float predict(std::vector<float> &x_pred);
     std::vector<float> predict(std::vector<std::vector<float>>& x_test);
     void print_predict(std::vector<std::vector<float>>& x_val, std::vector<float> &y_val);
     // mimic predict_proba from sklearn
-    void analyze_2_targets(std::vector<std::vector<float>> &x_test, std::vector<float> &y_test);
-    void show_final_weights();
-    void show_support_vectors(); // no. of features = no. of SVs
+    // void analyze_2_targets(std::vector<std::vector<float>> &x_test, std::vector<float> &y_test);
+    // void show_final_weights();
+    // void show_support_vectors(); // no. of features = no. of SVs
 
 private:
     static float R2_score(std::vector<float> &actual, std::vector<float> &predicted);
@@ -107,13 +111,93 @@ inline SVMRegressor::SVMRegressor(std::vector<std::vector<float>> &X_i, std::vec
     LOG_UPDATE("Dataset normalized.");
 }
 
-inline void SVMRegressor::train(float lambda, int epochs) {
+inline void SVMRegressor::train(float lambda, float epsilon, int epochs) {
       auto train_start = std::chrono::high_resolution_clock::now();
 
     ////////////////////// Training begins here //////////////////////
 
+    /*
+     * eta = 1 / (lambda * step count)
+     *
+     * Inside the epsilon tube:
+     *      w(t+1) = (1 - eta(t) * lambda) * w(t)
+     *      b(t+1) = b
+     *      no loss, regularization only on w
+     *
+     * Outside the epsilon tube:
+     *      Under predicted - y(t) - P(t) > Epsilon
+     *             w(t+1) = (1 - n(t)*lambda)*w(t) + n(t)*X(t)
+     *             b(t+1) = b(t) + n(t)
+     *
+     *      Over Predicted - P(t) - y(t) > Epsilon
+     *             w(t+1) = (1-n(t)*lambda)*w(t) - n(t)*X(t)
+     *             b(t+q) = b(t) - n(t)
+     */
 
+    // w has just as  many cols as the training dataset, plus the bias
+    w = Eigen::VectorXf::Zero((Eigen::Index)ncols + 1);
 
+    // random engine to shuffle the dataset after every epoch
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    // initialize a vector containing all the unique values of indices in the X matrix
+    indices.resize(nrows);
+    std::iota(indices.begin(), indices.end(), 0);
+
+    const int dim_full = (int)w.size();
+    const int dim_w = (int)ncols;
+    const int bias_idx = ncols;
+
+    for (int epoch = 0; epoch < epochs; epoch++) {
+        std::shuffle(indices.begin(), indices.end(), gen);
+
+        for (size_t row = 0; row < nrows; row++) {
+            size_t step = row+1;
+            // eta = 1 / (lambda * step count)
+            float eta = 1.0f / (float)(lambda * step);
+
+            auto dim = w.size();
+            int curr_idx = (int)indices[row];
+
+            // prediction
+            float score = cblas_sdot(dim_full, w.data(), 1, X.row(curr_idx).data(), 1);
+
+            // residual / error
+            float residual = score - Y(curr_idx);
+
+            // Regularization step -> w = (1 - eta * lambda) * w
+            // scaling it regardless of prediction
+            cblas_sscal(dim, 1.0f - eta*lambda, w.data(), 1);
+
+            /*
+            * Outside the epsilon tube:
+            *      Under predicted - y(t) - P(t) > Epsilon
+            *             w(t+1) = (1 - n(t)*lambda)*w(t) + n(t)*X(t)
+            *             b(t+1) = b(t) + n(t)
+            *
+            *      Over Predicted - P(t) - y(t) > Epsilon
+            *             w(t+1) = (1-n(t)*lambda)*w(t) - n(t)*X(t)
+            *             b(t+q) = b(t) - n(t)
+             */
+            // loss gradient
+            float alpha = 0.0f;
+
+            if (residual < epsilon) { // P_i - y_i > epsilon - over prediction
+                alpha = -eta;
+            } else if (residual > epsilon) {// P_i - y_i < epsilon - under prediction
+                alpha = eta;
+            }
+
+            if (std::abs(alpha) > 1e-8) {
+                // loss update on the feature weights
+                cblas_saxpy(dim_w, alpha, X.row(curr_idx).data(), 1, w.data(), 1);
+
+                // update bias term
+                w(bias_idx) += alpha;
+            }
+        }
+    }
 
     ////////////////////// Training ends here ////////////////////////
 

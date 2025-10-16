@@ -46,101 +46,97 @@ namespace Glacier::Models {
 
     // constructor
     inline SVMClassifier::SVMClassifier(std::vector<std::vector<float> > &X_i, std::vector<std::string> &Y_i) {
-        // check for the number of threads, cut it by two, and use those many
-        // int threads = omp_get_max_threads() / 2;
-        // omp_set_num_threads(threads);
-        // LOG_DEBUG("Number of threads", threads);
 
-        // check if input matrices are empty or not
-        if (X_i.empty() || Y_i.empty()) {                                                                                   // Check if the inputs are valid or not
-            LOG_ERROR("Input data cannot be empty.");
-        }
-
-        // check if every row has a target
-        if (X_i.size() != Y_i.size()) {
-            LOG_ERROR("Input and output data must have the same size.");
-        }
-
-        // check for empty dataset
-        for (auto &row : X_i)                                                                                  // Check if all the rows are of the same size
-            if (row.size() != X_i[0].size()) {
-                LOG_ERROR("Row sizes not consistent.");
-            }
-        LOG_UPDATE("Dataset alright");
-
-        nrows = X_i.size();
-        ncols = X_i[0].size();
-        LOG_DEBUG("Number of rows in input X dataset", X_i.size());
-        LOG_DEBUG("Number of cols in input X dataset", X_i[0].size());
-        std::cout << "\n";
-
-        // Resizing all the DSs to the required size
-        X.resize(nrows, ncols + 1);           // no. of rows + (no. of cols + 1 bias)
-        Y.resize(nrows);                                   // no of rows
-        mean.resize(ncols);                                 // no of cols
-        std_dev.resize(ncols);                              // no of cols
-
-
-        // populating the Eigen X matrix with the data while rejecting NaN or infinite values
-        X.col(ncols) = Eigen::VectorXf::Ones((Eigen::Index) nrows);
-        for (Eigen::Index row = 0; row < nrows; row++) {
-            for (Eigen::Index col = 0; col < ncols; col++) {
-                if (std::isfinite(X_i[row][col])) {
-                    X(row, col) = X_i[row][col];            // X matrix, with 0th column as 1
-                } else {
-                    LOG_ERROR("Bad value found at  X_i[" + std::to_string(row) + "][" + std::to_string(col) + "]. Program stalling...");
-                }
-            }
-        }
-        LOG_DEBUG("Number of rows in Eigen x_train", X.rows());
-        LOG_DEBUG("Number of cols in Eigen x_train", X.cols());
-        std::cout << "\n";
-
-        // normalize X
-        for (int colm = 0; colm < ncols; colm++) {
-            // calculating mean and standard deviation for normalization
-            mean(colm) = X.col(colm).sum() / nrows;
-            std_dev(colm) = std::sqrt((X.col(colm).array() - mean(colm)).square().sum() / nrows);
-
-            // normalizing X
-            X.col(colm).array() = (X.col(colm).array() - mean(colm)) / std_dev(colm);
-        }
-        LOG_UPDATE("Mean and Std_dev vectors are formed.");
-        LOG_UPDATE("Dataset normalized.");
-
-        // initialize Y
-        // store the labels present in the dataset
-        std::map<std::string, bool> seen;
-        for (const std::string& target : Y_i)
-            seen[target] = true;
-        for (auto &[key, _] : seen)
-            labels.push_back(key);
-
-        if (labels.size() < 2) {
-            LOG_ERROR("Less than two classification classes detected. Classification requires the dataset to have at least two target classes.");
-        } if (labels.size() > 2) {
-            LOG_ERROR("More than two classification classes detected. Classification requires the dataset to have at least two target classes.");
-        }
-
-        // multiclass classification by default
-        std::ranges::sort(labels);
-
-        // assign -1 and 1 to segregate btw the two classes
-        std::map<std::string, int> indexing;
-        indexing[labels[0]] = -1;
-        indexing[labels[1]] = 1;
-        for (long j = 0; j < nrows; j++) {
-            Y[j] = (float) indexing[Y_i[j]];
-        }
-        LOG_UPDATE("Labels vector formed and indexed.");
-
-        LOG_DEBUG("Size of labels", labels.size());
-        LOG_DEBUG("Number of rows in y_train", Y.size());
-        std::cout << "\n";
+    // Check if the inputs are valid or not
+    // check if input matrices are empty or not
+    if (X_i.empty() || Y_i.empty()) {
+        LOG_ERROR("Input data cannot be empty.");
     }
 
-    inline void SVMClassifier::train(float lambda, int epochs) {
+    // check if every row has a target
+    if (X_i.size() != Y_i.size()) {
+        LOG_ERROR("Input and output data must have the same size.");
+    }
 
+    // check for empty dataset
+    for (auto &row : X_i)
+        if (row.size() != X_i[0].size()) {
+            LOG_ERROR("Row sizes not consistent.");
+        }
+    LOG_UPDATE("Dataset alright");
+
+    nrows = (Eigen::Index) X_i.size();
+    ncols = (Eigen::Index) X_i[0].size();
+    LOG_DEBUG("Number of rows in input X dataset", X_i.size());
+    LOG_DEBUG("Number of cols in input X dataset", X_i[0].size());
+    std::cout << "\n";
+
+    // Resizing all the DSs to the required size
+    X.resize(nrows, ncols + 1);           // no. of rows + (no. of cols + 1 bias)
+    Y.resize(nrows);                                   // no of rows
+    mean.resize(ncols);                                 // no of cols
+    std_dev.resize(ncols);                              // no of cols
+
+
+    // populating the Eigen X matrix with the data while rejecting NaN or infinite values
+    X.col(ncols) = Eigen::VectorXf::Ones((Eigen::Index) nrows);
+    for (Eigen::Index row = 0; row < nrows; row++) {
+        for (Eigen::Index col = 0; col < ncols; col++) {
+            if (std::isfinite(X_i[row][col])) {
+                X(row, col) = X_i[row][col];            // X matrix, with 0th column as 1
+            } else {
+                LOG_ERROR("Bad value found at  X_i[" + std::to_string(row) + "][" + std::to_string(col) + "]. Program stalling...");
+            }
+        }
+    }
+    LOG_DEBUG("Number of rows in Eigen x_train", X.rows());
+    LOG_DEBUG("Number of cols in Eigen x_train", X.cols());
+    std::cout << "\n";
+
+    // normalize X
+    for (int colm = 0; colm < ncols; colm++) {
+        // calculating mean and standard deviation for normalization
+        mean(colm) = X.col(colm).sum() / (float) nrows;
+        std_dev(colm) = std::sqrt((X.col(colm).array() - mean(colm)).square().sum() / (float) nrows);
+
+        // normalizing X
+        X.col(colm).array() = (X.col(colm).array() - mean(colm)) / std_dev(colm);
+    }
+    LOG_UPDATE("Mean and Std_dev vectors are formed.");
+    LOG_UPDATE("Dataset normalized.");
+
+    // initialize Y
+    // store the labels present in the dataset
+    std::map<std::string, bool> seen;
+    for (const std::string& target : Y_i)
+        seen[target] = true;
+    for (auto &[key, _] : seen)
+        labels.push_back(key);
+
+    if (labels.size() < 2) {
+        LOG_ERROR("Less than two classification classes detected. Classification requires the dataset to have at least two target classes.");
+    } if (labels.size() > 2) {
+        LOG_ERROR("More than two classification classes detected. Classification requires the dataset to have at least two target classes.");
+    }
+
+    // multiclass classification by default
+    std::ranges::sort(labels);
+
+    // assign -1 and 1 to segregate btw the two classes
+    std::map<std::string, int> indexing;
+    indexing[labels[0]] = -1;
+    indexing[labels[1]] = 1;
+    for (long j = 0; j < nrows; j++) {
+        Y[j] = (float) indexing[Y_i[j]];
+    }
+    LOG_UPDATE("Labels vector formed and indexed.");
+
+    LOG_DEBUG("Size of labels", labels.size());
+    LOG_DEBUG("Number of rows in y_train", Y.size());
+    std::cout << "\n";
+}
+
+    inline void SVMClassifier::train(float lambda, int epochs) {
         ////////////////////// Training begins here //////////////////////
 
         // w has just as  many cols as the training dataset, plus the bias
