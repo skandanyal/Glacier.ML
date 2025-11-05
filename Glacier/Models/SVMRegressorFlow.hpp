@@ -28,16 +28,15 @@ namespace Glacier::Models {
         Eigen::VectorXf std_dev;                // (p x 1)
         Eigen::Index nrows{}, ncols{};
         Eigen::VectorXf w;
-        std::vector<size_t> indices;
+        std::vector<int> indices;
 
     public:
         SVMRegressor(std::vector<std::vector<float>> &x_i, std::vector<float> &y_i);
         void train(float lambda, float epsilon, int epochs);
         float predict(std::vector<float> &x_pred);
-        std::vector<float> predict(std::vector<std::vector<float>>& x_test);
-        void print_predict(std::vector<std::vector<float>>& x_val, std::vector<float> &y_val);
-        // mimic predict_proba from sklearn
-        // void analyze_2_targets(std::vector<std::vector<float>> &x_test, std::vector<float> &y_test);
+        std::vector<float> predict(std::vector<std::vector<float>> &x_pred);
+        void print_predict(std::vector<std::vector<float>> &x_pred, std::vector<float> &y_pred);
+        void analyze(std::vector<std::vector<float>> &x_test, std::vector<float> &y_test);
         // void show_final_weights();
         // void show_support_vectors(); // no. of features = no. of SVs
 
@@ -90,8 +89,8 @@ namespace Glacier::Models {
         X.col(ncols) = Eigen::VectorXf::Zero((Eigen::Index) nrows);
 
         // populating the Eigen X matrix with the data
-        for (size_t row = 0; row < nrows; row++)
-            for (size_t col = 0; col < ncols; col++)
+        for (Eigen::Index row = 0; row < nrows; row++)
+            for (Eigen::Index col = 0; col < ncols; col++)
                 X(row, col) = X_i[row][col];
         LOG_DEBUG("Number of rows in x_train", X.rows());
         LOG_DEBUG("Number of cols in x_train", X.cols());
@@ -104,6 +103,10 @@ namespace Glacier::Models {
         LOG_DEBUG("Number of rows in y_train", Y.rows());
         LOG_DEBUG("Number of cols in y_train", Y.cols());
         std::cout << "\n";
+
+        // initialize the mean and std_dev vectors
+        mean = Eigen::VectorXf::Zero((Eigen::Index) ncols);
+        std_dev = Eigen::VectorXf::Zero((Eigen::Index) ncols);
 
         // normalize X
         for (int colm = 0; colm < ncols; colm++) {
@@ -128,7 +131,7 @@ namespace Glacier::Models {
         const int dim_b = (int)ncols+1;
 
         // initializing the w vector
-        w - Eigen::VectorXf::Zero((Eigen::Index)dim_b);
+        w = Eigen::VectorXf::Zero((Eigen::Index)dim_b);
 
         // random engine
         std::random_device rd;
@@ -153,7 +156,7 @@ namespace Glacier::Models {
                 const int current_idx = indices[row];
 
                 // eta = 1 / (lambda * t)
-                const float eta = 1.0f / (lambda * step);
+                const float eta = 1.0f / (lambda *  step);
 
                 // P_i - prediction = w.T * X
                 const float P_i = cblas_sdot(dim_b, w.data(), 1, X.row(current_idx).data(), 1);
@@ -177,7 +180,7 @@ namespace Glacier::Models {
                 cblas_saxpy(dim_w, alpha, X.row(current_idx).data(), 1, w.data(), 1);
 
                 // update the bias
-                w(dim_b) += alpha;
+                w(dim_b - 1) += alpha;
             }
 
             // predicted value lies inside the epsilon tube, hence no need to update the w further
@@ -226,8 +229,8 @@ namespace Glacier::Models {
 
         ////////////////////// Prediction begins here //////////////////////
 
-        size_t Nrows = x_pred.size();
-        size_t Ncols = x_pred[0].size();
+        Eigen::Index Nrows = x_pred.size();
+        Eigen::Index Ncols = x_pred[0].size();
 
         LOG_DEBUG("Number of rows in X_test", Nrows);
         LOG_DEBUG("Number of columns in X_test", Ncols);
@@ -280,7 +283,7 @@ namespace Glacier::Models {
             ss_tot += (float) std::pow(actual[i] - mean_y, 2);
         }
 
-        return 1.0 - ss_res / ss_tot;
+        return (float) 1.0 - ss_res / ss_tot;
     }
 
 
