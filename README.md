@@ -52,3 +52,4 @@ Use this block of code in the beginning of working file to enable ANSI colour lo
 ## Models benchmarked so far:
 * Logistic Regression
 * KNN Classifier
+* SVM Classifier (PEGASOS)
