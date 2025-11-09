@@ -13,7 +13,7 @@
 #include <map>
 #include "../Utils/logs.hpp"
 
-namespace Glacier {
+namespace Glacier::Models {
     class Logistic_Regression {
     private:
         Eigen::MatrixXf X;                  // (n x p)
@@ -44,17 +44,8 @@ namespace Glacier {
 }
 
 // constructor
-inline Glacier::Logistic_Regression::Logistic_Regression(std::vector<std::vector<float>> &X_i, std::vector<std::string> &Y_i) : X(), Y(), Beta(), F_x() {
-    std::cout << R"(
-         ██████╗ ██╗      █████╗  ██████╗██╗███████╗██████╗    ███╗   ███╗██╗
-        ██╔════╝ ██║     ██╔══██╗██╔════╝██║██╔════╝██╔══██╗   ████╗ ████║██║
-        ██║  ███╗██║     ███████║██║     ██║█████╗  ██████╔╝   ██╔████╔██║██║
-        ██║   ██║██║     ██╔══██║██║     ██║██╔══╝  ██╔══██╗   ██║╚██╔╝██║██║
-        ╚██████╔╝███████╗██║  ██║╚██████╗██║███████╗██║  ██║██╗██║ ╚═╝ ██║███████╗
-         ╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝╚══════╝
-    )" << std::endl;
-
-    // check for empty dataset
+inline Glacier::Models::Logistic_Regression::Logistic_Regression(std::vector<std::vector<float>> &X_i, std::vector<std::string> &Y_i) : X(), Y(), Beta(), F_x() {
+        // check for empty dataset
     if (X_i.empty() || Y_i.empty()) {                                                                                   // Check if the inputs are valid or not
         LOG_ERROR("Input data cannot be empty.");
     }
@@ -141,7 +132,7 @@ inline Glacier::Logistic_Regression::Logistic_Regression(std::vector<std::vector
     Beta = Eigen::VectorXf::Zero(X.cols());
 }
 
-inline void Glacier::Logistic_Regression::train(float alpha, int iterations) {
+inline void Glacier::Models::Logistic_Regression::train(float alpha, int iterations) {
     LOG_INFO("Training initiated...");
     auto train_start = std::chrono::high_resolution_clock::now();
 
@@ -210,7 +201,7 @@ inline void Glacier::Logistic_Regression::train(float alpha, int iterations) {
      */
 }
 
-inline std::string Glacier::Logistic_Regression::predict(std::vector<float> &x_pred) {
+inline std::string Glacier::Models::Logistic_Regression::predict(std::vector<float> &x_pred) {
     LOG_INFO("Singular prediction initiated...");
 
     if (x_pred.size() + 1 != Beta.cols()) {
@@ -237,7 +228,7 @@ inline std::string Glacier::Logistic_Regression::predict(std::vector<float> &x_p
     ////////////////////// Prediction ends here //////////////////////
 }
 
-inline std::vector<std::string> Glacier::Logistic_Regression::predict(std::vector<std::vector<float>>& X_test) {
+inline std::vector<std::string> Glacier::Models::Logistic_Regression::predict(std::vector<std::vector<float>>& X_test) {
     LOG_INFO("Block prediction initiated...");
     if (Beta.size() == 0) {
         LOG_ERROR("Train the data using train() before using predict().");
@@ -287,7 +278,7 @@ inline std::vector<std::string> Glacier::Logistic_Regression::predict(std::vecto
     ////////////////////// Prediction ends here //////////////////////
 }
 
-inline void Glacier::Logistic_Regression::print_predict(std::vector<std::vector<float> > &x_test, std::vector<std::string> &y_val) {
+inline void Glacier::Models::Logistic_Regression::print_predict(std::vector<std::vector<float> > &x_test, std::vector<std::string> &y_val) {
     std::vector<std::string> y_test = predict(x_test);
 
     std::cout << "Predicted\t|\tActual\n";
@@ -297,7 +288,7 @@ inline void Glacier::Logistic_Regression::print_predict(std::vector<std::vector<
     std::cout << "\n";
 }
 
-inline void Glacier::Logistic_Regression::analyze(std::vector<std::vector<float>> &x_test, std::vector<std::string> &y_test) {
+inline void Glacier::Models::Logistic_Regression::analyze(std::vector<std::vector<float>> &x_test, std::vector<std::string> &y_test) {
     LOG_INFO("Analysis initiated...");
     std::vector<std::string> y_pred = predict(x_test);
 
@@ -338,14 +329,14 @@ inline void Glacier::Logistic_Regression::analyze(std::vector<std::vector<float>
     std::cout << "Precision: " << precision << "\n\n";                                                                  // true positives / true positives + false positives
 }
 
-inline void Glacier::Logistic_Regression::print_Beta_values() {
+inline void Glacier::Models::Logistic_Regression::print_Beta_values() {
     LOG_INFO("Regression coefficients: ");
     for (int i = 0; i < Beta.rows(); i++)
         std::cout << "B" << i << ": " << Beta(i) << "\n";
     std::cout << "\n";
 }
 
-inline float Glacier::Logistic_Regression::sigmoid(float x) {
+inline float Glacier::Models::Logistic_Regression::sigmoid(float x) {
     float y = std::clamp(x, -100.0f, 100.0f);
     return 1 / (1 + std::exp(-1 * y));
 }

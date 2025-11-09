@@ -2,9 +2,10 @@
 // Created by skandan-c-y on 7/2/25.
 //
 
-#include "../Models/LogisticRegression.hpp"
-#include "utilities.hpp"
 #include <iostream>
+#include <vector>
+#include "Models/LogisticRegression.hpp"
+#include "Utils/utilities.hpp"
 
 int main() {
 
@@ -15,9 +16,9 @@ int main() {
       y_train_10000, y_train_50000, y_train_100000, y_train_140000, y_train,
       y_test, y_cal_cs, y_val;
 
-  Utils::read_csv("../Datasets/credit_scores/cs-140000.csv",
-                  x_train_140000, y_train_140000);
-  Logistic_Regression iceberg_140000(x_train_140000, y_train_140000);
+  Glacier::Utils::read_csv("../Datasets/credit_scores/cs-140000.csv",
+                           x_train_140000, y_train_140000);
+  Glacier::Models::Logistic_Regression iceberg_140000(x_train_140000, y_train_140000);
 
 
   // hyperparameters

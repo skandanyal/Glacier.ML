@@ -30,6 +30,8 @@ namespace Glacier::Models {
         Eigen::VectorXf mean;
         Eigen::VectorXf std_dev;
         std::vector<std::string> labels;    // 2
+        float lambda{};
+        int epochs{};
 
 
     public:
@@ -136,8 +138,12 @@ namespace Glacier::Models {
     std::cout << "\n";
 }
 
-    inline void SVMClassifier::train(float lambda, int epochs) {
+    inline void SVMClassifier::train(float lambda_i, int epochs_i) {
         ////////////////////// Training begins here //////////////////////
+
+        // assigning the hyperparams to object vars.
+        lambda = lambda_i;
+        epochs = epochs_i;
 
         // w has just as  many cols as the training dataset, plus the bias
         w = Eigen::VectorXf::Zero((Eigen::Index)ncols + 1);
@@ -162,12 +168,6 @@ namespace Glacier::Models {
                     cblas_saxpy(dim, alpha, X.row(row).data(), 1, w.data(), 1);
                 }
             }
-
-            // if (epoch % 10 == 0) {
-            //     LOG_UPDATE("Weights at Epoch " + std::to_string(epoch) + " : " +
-            //                w.transpose().format(Eigen::IOFormat(Eigen::StreamPrecision,
-            //                                                    Eigen::DontAlignCols, ", ", ", ", "", "", "[", "]")));
-            // }
         }
 
         ////////////////////// Training ends here ////////////////////////
@@ -206,10 +206,10 @@ namespace Glacier::Models {
          * Predict by computing sign(w.dot(x_aug))
          */
 
-        Eigen::VectorXf x_p(ncols + 1, 0);
+        Eigen::VectorXf x_p(ncols + 1);
         for (int i=0; i<ncols; i++)
             x_p(i) = (x_pred[i] - mean(i)) / std_dev(i);
-        x_p(ncols) = 1;
+        x_p(ncols) = 1.0f;
 
         float qty = w.transpose().dot(x_p);
 
@@ -237,7 +237,7 @@ namespace Glacier::Models {
 
         // load the matrix into an Eigen matrix
         Eigen::MatrixXf x_p(Nrows, Ncols+1);
-        x_p.col(ncols) = Eigen::VectorXf::Ones((Eigen::Index) Nrows);
+        x_p.col(Ncols) = Eigen::VectorXf::Ones(Nrows);
         for (int row = 0; row < Nrows; row++) {
             for (int col = 0; col < Ncols; col++) {
                 if (std::isfinite(x_pred[row][col])){
@@ -249,7 +249,7 @@ namespace Glacier::Models {
             }
         }
         for (int colm = 0; colm < Ncols; colm++) {
-            X.col(colm).array() = (X.col(colm).array() - mean(colm)) / std_dev(colm);
+            x_p.col(colm).array() = (x_p.col(colm).array() - mean(colm)) / std_dev(colm);
         }
 
         // predict using the formula sign(X_Pred * w)
@@ -280,16 +280,16 @@ namespace Glacier::Models {
 
         for (size_t i=0; i<y_pred.size(); i++) {
             if (y_test[i] == labels[0] && y_pred[i] == labels[0])   // tp
-                tp++;
+                tn++;
 
             else if (y_test[i] == labels[0] && y_pred[i] == labels[1])    // fn
-                fn++;
-
-            else if (y_test[i] == labels[1] && y_pred[i] == labels[0])    // fp
                 fp++;
 
+            else if (y_test[i] == labels[1] && y_pred[i] == labels[0])    // fp
+                fn++;
+
             else if (y_test[i] == labels[1] && y_pred[i] == labels[1])    // tn
-                tn++;
+                tp++;
         }
 
         LOG_INFO("Confusion matrix: ");

@@ -237,7 +237,7 @@ namespace Glacier::Models {
         std::cout << "\n";
 
         Eigen::MatrixXf X_pred(Nrows, Ncols + 1);
-        std::vector<float> result;
+        std::vector<float> result(Nrows);
 
         // normalize X
         for (int row = 0; row < Nrows; row++) {
@@ -245,8 +245,9 @@ namespace Glacier::Models {
                 X_pred(row, colm) = (x_pred[row][colm] - mean[colm]) / std_dev[colm];
             }
         }
+
         // bias colm
-        X_pred.col(Ncols) = Eigen::VectorXf::Ones((Eigen::Index) nrows);
+        X_pred.col(Ncols) = Eigen::VectorXf::Ones(Nrows);
 
         // calculating the prediction
         Eigen::VectorXf answer = X_pred * w;
@@ -288,15 +289,18 @@ namespace Glacier::Models {
 
 
     inline void SVMRegressor::analyze(std::vector<std::vector<float>> &x_test, std::vector<float> &y_test) {
-        if (x_test[0].size() != y_test.size()) {
+        if (x_test.size() != y_test.size()) {
             LOG_ERROR("Test size does not match.");
         }
 
         float mse = 0.0, rmse = 0.0, mae = 0.0, mape = 0.0;
         std::vector<float> y_pred = predict(x_test);
-#pragma omp parallel for reduction(+:mse) reduction(+:mae) reduction(+:mape)
+
+#pragma omp parallel for \
+reduction(+:mse) reduction(+:mae) reduction(+:mape)
         for (size_t i = 0; i < y_pred.size(); i++) {
             float error = y_test[i] - y_pred[i];
+
             mse += error * error;
             mae += std::abs(error);
 
@@ -305,10 +309,11 @@ namespace Glacier::Models {
             }
         }
 
-        mse = mse / (float) x_test.size();
+        auto N = (float) x_test.size();
+        mse = mse / N;
         rmse = std::sqrt(mse);
-        mae = mae / (float) x_test.size();
-        mape = mape / (float) x_test.size() * 100;
+        mae = mae / N;
+        mape = mape / N * 100;
 
         LOG_INFO("Evaluation metrics: ");
         std::cout << "R2 score: " << R2_score(y_test, y_pred) << "\n";
