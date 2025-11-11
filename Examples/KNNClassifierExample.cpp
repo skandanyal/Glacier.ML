@@ -13,14 +13,14 @@ int main() {
     std::vector<std::string> y_val, y_train_500;
     // y_train_1000, y_train_5000, y_train_10000, y_train_50000, y_train_100000, y_train_140000;
 
-    Utils::read_csv("../Datasets/credit_scores/cs-500.csv", x_train_500, y_train_500);
-    // Utils::read_csv("../Datasets/credit_scores/cs-1000.csv", x_train_1000, y_train_1000);
-    // Utils::read_csv("../Datasets/credit_scores/cs-5000.csv", x_train_5000, y_train_5000);
-    // Utils::read_csv("../Datasets/credit_scores/cs-10000.csv", x_train_10000, y_train_10000);
-    // Utils::read_csv("../Datasets/credit_scores/cs-50000.csv", x_train_50000, y_train_50000);
-    // Utils::read_csv("../Datasets/credit_scores/cs-100000.csv", x_train_100000, y_train_100000);
-    // Utils::read_csv("../Datasets/credit_scores/cs-140000.csv", x_train_140000, y_train_140000);
-    Utils::read_csv("../Datasets/credit_scores/cs_val_2.csv", x_val, y_val);
+    Utils::read_csv("../Datasets/cs_datasets/cs-500.csv", x_train_500, y_train_500);
+    // Utils::read_csv("../Datasets/cs_datasets/cs-1000.csv", x_train_1000, y_train_1000);
+    // Utils::read_csv("../Datasets/cs_datasets/cs-5000.csv", x_train_5000, y_train_5000);
+    // Utils::read_csv("../Datasets/cs_datasets/cs-10000.csv", x_train_10000, y_train_10000);
+    // Utils::read_csv("../Datasets/cs_datasets/cs-50000.csv", x_train_50000, y_train_50000);
+    // Utils::read_csv("../Datasets/cs_datasets/cs-100000.csv", x_train_100000, y_train_100000);
+    // Utils::read_csv("../Datasets/cs_datasets/cs-140000.csv", x_train_140000, y_train_140000);
+    Utils::read_csv("../Datasets/cs_datasets/cs_val_2.csv", x_val, y_val);
 
     KNNClassifier iceberg_500(x_train_500, y_train_500);
     // KNNClassifier iceberg_1000(x_train_1000, y_train_1000);

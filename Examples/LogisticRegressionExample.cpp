@@ -16,7 +16,7 @@ int main() {
       y_train_10000, y_train_50000, y_train_100000, y_train_140000, y_train,
       y_test, y_cal_cs, y_val;
 
-  Glacier::Utils::read_csv("../Datasets/credit_scores/cs-140000.csv",
+  Glacier::Utils::read_csv("../Datasets/cs_datasets/cs-140000.csv",
                            x_train_140000, y_train_140000);
   Glacier::Models::Logistic_Regression iceberg_140000(x_train_140000, y_train_140000);
 

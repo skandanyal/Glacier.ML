@@ -13,14 +13,14 @@ int main() {
     y_train_100000, y_train_140000, y_test;
 
     // creating the dataset containers
-    Glacier::Utils::read_csv("../Datasets/credit_scores/cs-500.csv", x_train_500, y_train_500, true);
-    Glacier::Utils::read_csv("../Datasets/credit_scores/cs-1000.csv", x_train_1000, y_train_1000, true);
-    Glacier::Utils::read_csv("../Datasets/credit_scores/cs-5000.csv", x_train_5000, y_train_5000, true);
-    Glacier::Utils::read_csv("../Datasets/credit_scores/cs-10000.csv", x_train_10000, y_train_10000, true);
-    Glacier::Utils::read_csv("../Datasets/credit_scores/cs-50000.csv", x_train_50000, y_train_50000, true);
-    Glacier::Utils::read_csv("../Datasets/credit_scores/cs-100000.csv", x_train_100000, y_train_100000, true);
-    Glacier::Utils::read_csv("../Datasets/credit_scores/cs-140000.csv", x_train_140000, y_train_140000, true);
-    Glacier::Utils::read_csv("../Datasets/credit_scores/cs_val_2.csv", x_test, y_test, true);
+    Glacier::Utils::read_csv("../Datasets/cs_datasets/cs-500.csv", x_train_500, y_train_500, true);
+    Glacier::Utils::read_csv("../Datasets/cs_datasets/cs-1000.csv", x_train_1000, y_train_1000, true);
+    Glacier::Utils::read_csv("../Datasets/cs_datasets/cs-5000.csv", x_train_5000, y_train_5000, true);
+    Glacier::Utils::read_csv("../Datasets/cs_datasets/cs-10000.csv", x_train_10000, y_train_10000, true);
+    Glacier::Utils::read_csv("../Datasets/cs_datasets/cs-50000.csv", x_train_50000, y_train_50000, true);
+    Glacier::Utils::read_csv("../Datasets/cs_datasets/cs-100000.csv", x_train_100000, y_train_100000, true);
+    Glacier::Utils::read_csv("../Datasets/cs_datasets/cs-140000.csv", x_train_140000, y_train_140000, true);
+    Glacier::Utils::read_csv("../Datasets/cs_datasets/cs_val_2.csv", x_test, y_test, true);
 
     // hyperparameters - float lambda, int epochs
     float lambda = 0.5f;
