@@ -43,13 +43,13 @@ endif()
 ################################################################################################
 
 # Include the executable name here!!
-add_executable(KNNC Examples/KNNClassifierExample.cpp)
-add_executable(KNNR Examples/KNNRegressorExample.cpp)
-add_executable(LogR Examples/LogisticRegressionExample.cpp)
-add_executable(MLR Examples/MultipleLinearRegressionExample.cpp)
-add_executable(SLR Examples/SimpleLinearRegressionExample.cpp)
-add_executable(SVMC Examples/SVMClassifierExample.cpp)
-add_executable(SVMR Examples/SVMRegressorExample.cpp)
+add_executable(KNNC Benchmarking_results/Classifiers/KNNClassifier/KNNClassifierExample.cpp)
+add_executable(KNNR Examples/Regression_Models/KNNRegressorExample.cpp)
+add_executable(LogR Benchmarking_results/Classifiers/LogisticRegression/LogisticRegressionExample.cpp)
+add_executable(MLR Examples/Regression_Models/MultipleLinearRegressionExample.cpp)
+add_executable(SLR Examples/Regression_Models/SimpleLinearRegressionExample.cpp)
+add_executable(SVMC Benchmarking_results/Classifiers/SVMClassifier/SVMClassifierExample.cpp)
+add_executable(SVMR Examples/Regression_Models/SVMRegressorExample.cpp)
 
 target_link_libraries(KNNC PRIVATE Glacier)
 target_link_libraries(KNNR PRIVATE Glacier)

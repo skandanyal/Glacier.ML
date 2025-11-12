@@ -1,8 +1,8 @@
 //
 // Created by skandan-c-y on 7/14/25.
 //
-#include "../Glacier/Models/KNNClassifier.hpp"
-#include "../Glacier/Utils/utilities.hpp"
+#include "../../../Glacier/Models/KNNClassifier.hpp"
+#include "../../../Glacier/Utils/utilities.hpp"
 #include <chrono>
 #include <iostream>
 
@@ -22,7 +22,7 @@ int main() {
     // Utils::read_csv("../Datasets/cs_datasets/cs-140000.csv", x_train_140000, y_train_140000);
     Utils::read_csv("../Datasets/cs_datasets/cs_val_2.csv", x_val, y_val);
 
-    KNNClassifier iceberg_500(x_train_500, y_train_500);
+    Models::KNNClassifier iceberg_500(x_train_500, y_train_500);
     // KNNClassifier iceberg_1000(x_train_1000, y_train_1000);
     // KNNClassifier iceberg_5000(x_train_5000, y_train_5000);
     // KNNClassifier iceberg_10000(x_train_10000, y_train_10000);
@@ -50,7 +50,7 @@ int main() {
 
             auto end_time_500 = std::chrono::high_resolution_clock::now();
 
-            std::cout << "500 rows: " << std::chrono::duration_cast<std::chrono::microseconds>( end_time_500 - start_time_500) << " micro seconds\n";
+            std::cout << "500 rows: " << std::chrono::duration_cast<std::chrono::microseconds>( end_time_500 - start_time_500).count() << " micro seconds\n";
         }
         std::cout << "\n";
 
