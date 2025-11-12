@@ -8,7 +8,7 @@
 ```
 ```Licensed for viewing only. Not open-source. See LICENSE.txt for details.```
 
-Glacier is a header-only library written in C++, which contains all the machine learning models, related tests and datasets required to build a machine learning project using C++.
+Glacier is a header-only Machine Learning library written in C++, which contains all the machine learning models, related tests and datasets required to build a machine learning project using C++.
 
 ![Status](https://img.shields.io/badge/Status-Work%20in%20Progress-yellow?style=for-the-badge&logo=github&logoColor=black)
 [![License](https://img.shields.io/badge/license-Glacier%20Custom%20License-blue?style=for-the-badge)](./LICENSE.txt)
@@ -21,18 +21,21 @@ Glacier is a header-only library written in C++, which contains all the machine 
 ![Core ML Concepts](https://img.shields.io/badge/Core%20ML%20Concepts-4th%20Sem%20Lab-blueviolet?style=for-the-badge&logo=code&logoColor=white)
 
 ## Languages and Frameworks used:
-*Core stack:*     
+**Language:**
+C++ 20
+
+**Core stack:**     
 ![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge\&logo=c%2B%2B\&logoColor=white)
 ![Eigen](https://img.shields.io/badge/Eigen-1F1232?style=for-the-badge\&logo=matrix\&logoColor=white)
 ![Boost](https://img.shields.io/badge/Boost-1F1232?style=for-the-badge\&logo=code\&logoColor=white)
 ![OpenMP](https://img.shields.io/badge/OpenMP-26667F?style=for-the-badge\&logo=openmp\&logoColor=white)
 ![OpenBLAS](https://img.shields.io/badge/OpenBLAS-E00?style=for-the-badge\&logo=openblas\&logoColor=white)
 
-*Development and Profiling:*       
+**Development and Profiling:**       
 ![CMake](https://img.shields.io/badge/CMake-06466B?style=for-the-badge\&logo=cmake\&logoColor=white)
 ![perf](https://img.shields.io/badge/Perf-E03C31?style=for-the-badge\&logo=linux\&logoColor=white)
 
-*Planned for furute integration:*        
+**Planned for future integration:**        
 ![GTest](https://img.shields.io/badge/GTest-00BF63?style=for-the-badge\&logo=googletest\&logoColor=white)
 
 
@@ -48,8 +51,15 @@ Use this block of code in the beginning of working file to enable ANSI colour lo
 #endif
 ```
 
-  
+
 ## Models benchmarked so far:
-* Logistic Regression
-* KNN Classifier
-* SVM Classifier (PEGASOS)
+
+|     Classifiers     | Regressors |
+|:-------------------:|:----------:|
+| Logistic Regression |     -      |
+|   KNN Classifier    |     -      |
+|   SVM Classifier    |     -      |
+
+
+## Models benchmarked on:
+* **AMD Ryzen 6600H processor** with 6 cores and 12 threads
