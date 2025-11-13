@@ -32,7 +32,7 @@
 ## Programming languages and libraries
 |        Purpose         |                  Language and libraries                  |
 |:----------------------:|:--------------------------------------------------------:|
-|       Core logic       |               C++ 20, Eigen, Boost, OpenMP               |
+|       Core logic       |          C++ 20, Eigen, Boost, OpenMP, OpenBLAS          |
 | Website infrastructure |       Golang, HTML and CSS, Javascript, Javascript       |
 |        Database        |                        PostgreSQL                        |
 |      Benchmarking      | Python, Numpy, Pandas, Scikit-learn, Matplotlib, Seaborn |
