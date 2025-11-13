@@ -11,8 +11,8 @@
 namespace Glacier {
     namespace Utils{
         void read_csv_1d(const std::string& filename, std::vector<float>& x, std::vector<float>& y, bool has_header = true);
-        void read_csv(const std::string& filename, std::vector<std::vector<float>>& features, std::vector<float>& targets, bool has_header = true);
-        void read_csv(const std::string& filename, std::vector<std::vector<float>>& x, std::vector<std::string>& y, bool has_header = true);
+        void read_csv_r(const std::string& filename, std::vector<std::vector<float>>& features, std::vector<float>& targets, bool has_header = true);
+        void read_csv_c(const std::string& filename, std::vector<std::vector<float>>& x, std::vector<std::string>& y, bool has_header = true);
         float mean(const std::vector<float>& x);
         double get_p_value(double t_stat, int dof);
     };
@@ -37,7 +37,7 @@ bool has_header ) {
     }
 }
 
-inline void Glacier::Utils::read_csv(const std::string& filename, std::vector<std::vector<float>>& features, std::vector<float>& targets,
+inline void Glacier::Utils::read_csv_r(const std::string& filename, std::vector<std::vector<float>>& features, std::vector<float>& targets,
               bool has_header) {
 
     std::ifstream file(filename);
@@ -69,7 +69,7 @@ inline void Glacier::Utils::read_csv(const std::string& filename, std::vector<st
     }
 }
 
-inline void Glacier::Utils::read_csv(const std::string& filename, std::vector<std::vector<float>>& x_train, std::vector<std::string>& y_train,
+inline void Glacier::Utils::read_csv_c(const std::string& filename, std::vector<std::vector<float>>& x_train, std::vector<std::string>& y_train,
                             bool has_header) {
     std::ifstream file(filename);
     if (!file.is_open()) {
