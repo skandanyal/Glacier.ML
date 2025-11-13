@@ -50,7 +50,7 @@
 ## Hardware requirements
 |     Hardware     |                      requirements                      |
 |:----------------:|:------------------------------------------------------:|
-|    Processor     | Any multi-core CPU<br>Intel i5 / AMD Ryzen 5 or better |
+|    Processor     | Any multi-core CPU<br>Intel i3 / AMD Ryzen 3 or better |
 |      Memory      |           Minimum 4 GB RAM, 8 GB recommended           |
 | Any other device |                  Standard PC / Laptop                  | 
 
