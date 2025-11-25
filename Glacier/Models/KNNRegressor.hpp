@@ -24,7 +24,6 @@ namespace Glacier::Models {
         std::vector<float> X;      // (n x p)
         std::vector<float> Y;                     // (n x 1)
         std::vector<std::string> labels;        // (p x 1)
-        // std::pair<double, float> Dist;
         std::vector<float> mean;                // (p x 1)
         std::vector<float> std_dev;             // (p x 1)
         int distance_metric{};
@@ -263,7 +262,7 @@ shared(answer)
 
     inline float KNNRegressor::R2_score(std::vector<float>& actual, std::vector<float>& predicted) {
         float mean_y = 0;
-#pragma omp parallel for simd reduction(+=mean_y)
+#pragma omp parallel for simd reduction(+:mean_y)
         for (int i=0; i<actual.size(); i++) {
             mean_y += actual[i];
         }
@@ -288,7 +287,7 @@ shared(answer)
         std::vector<float> y_pred = predict(x_test);
 #pragma omp parallel for reduction(+:mse) reduction(+:mae) reduction(+:mape) \
 default(none) \
-shared(y_pred, mse, rmse, mae, mape)
+shared(y_pred, rmse, y_test)
         for (size_t i = 0; i < y_pred.size(); i++) {
             float error = y_test[i] - y_pred[i];
             mse += error * error;

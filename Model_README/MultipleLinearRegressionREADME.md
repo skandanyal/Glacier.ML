@@ -52,5 +52,5 @@ MAE = \frac{1}{n} \sum |Y_{\text{gen}} - Y_{\text{pred}}|
 $$
 
 $$
-MAPE (in percentage) = \frac{100}{n} \sum \left| \frac{Y_{\text{gen}} - Y_{\text{pred}}}{Y_{\text{pred}}} \right| \% 
+MAPE (\%) = \frac{100}{n} \sum \left| \frac{Y_{\text{gen}} - Y_{\text{pred}}}{Y_{\text{pred}}} \right| \% 
 $$
