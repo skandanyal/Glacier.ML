@@ -35,7 +35,7 @@ namespace Glacier::Models {
         std::vector<std::string> predict(std::vector<std::vector<float>>& x_test);
         void print_predict(std::vector<std::vector<float> > &x_test, std::vector<std::string> &y_val);
         // mimic predict_proba from sklearn
-        void analyze(std::vector<std::vector<float>> &x_test, std::vector<std::string> &y_test);
+        void analyze_2_targets(std::vector<std::vector<float>> &x_test, std::vector<std::string> &y_test);
         void print_Beta_values();
 
     private:
@@ -288,7 +288,7 @@ inline void Glacier::Models::Logistic_Regression::print_predict(std::vector<std:
     std::cout << "\n";
 }
 
-inline void Glacier::Models::Logistic_Regression::analyze(std::vector<std::vector<float>> &x_test, std::vector<std::string> &y_test) {
+inline void Glacier::Models::Logistic_Regression::analyze_2_targets(std::vector<std::vector<float>> &x_test, std::vector<std::string> &y_test) {
     LOG_INFO("Analysis initiated...");
     std::vector<std::string> y_pred = predict(x_test);
 

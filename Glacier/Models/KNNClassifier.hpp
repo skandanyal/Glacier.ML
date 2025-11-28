@@ -301,81 +301,54 @@ shared(distance_metric, nrows, ncols, X, Y, x_pred, least_distance, p)
         }
         std::cout << "\n";
     }
+
     // mimic predict_proba from sklearn
-    void analyze_2_targets(std::vector<std::vector<float>> &x_test, std::vector<std::string> &y_test);
+    // void analyze_2_targets(std::vector<std::vector<float>> &x_test, std::vector<std::string> &y_test);
+
+    inline void Glacier::Models::KNNClassifier::analyze_2_targets(std::vector<std::vector<float>> &x_test, std::vector<std::string> &y_test) {
+    LOG_INFO("Analysis initiated...");
+    std::vector<std::string> y_pred = predict(x_test);
+
+    float tp = 0, fn = 0, fp = 0, tn = 0;
+
+    for (size_t i=0; i<y_pred.size(); i++) {
+        if (y_test[i] == labels[0] && y_pred[i] == labels[0])   // tp
+            tp++;
+
+        else if (y_test[i] == labels[0] && y_pred[i] == labels[1])    // fn
+            fn++;
+
+        else if (y_test[i] == labels[1] && y_pred[i] == labels[0])    // fp
+            fp++;
+
+        else if (y_test[i] == labels[1] && y_pred[i] == labels[1])    // tn
+            tn++;
+    }
+
+    LOG_INFO("Confusion matrix: ");
+    std::cout << "Actually " << labels[0] << ", Predicted " << labels[0] << ": " << tp << "\n";
+    std::cout << "Actually " << labels[0] << ", Predicted " << labels[1] << ": " << fn << "\n";
+    std::cout << "Actually " << labels[1] << ", Predicted " << labels[0] << ": " << fp << "\n";
+    std::cout << "Actually " << labels[1] << ", Predicted " << labels[1] << ": " << tn << "\n";
+    std::cout << "Total number of rows: " << x_test.size() << "\n\n";
+
+    LOG_INFO("Evaluation Metrics: (Out of 1)");
+    float accuracy = (tp + tn) / (tp + tn + fp + fn);
+    std::cout << "Accuracy: " << accuracy << "\n";                                                                      // correct classifications / total classifications
+
+    float recall = tp / (tp + fn);
+    std::cout << "Recall: " << recall << "\n";                                                                          // true positives / true positives + false negatives
+
+    float false_positive_rate = fp / (fp + tn);
+    std::cout << "False positive rate: " << false_positive_rate << "\n";                                                // false positives / false positives + true negatives
+
+    float precision = tp / (tp + fp);
+    std::cout << "Precision: " << precision << "\n\n";                                                                  // true positives / true positives + false positives
+}
 
 
 
     // std::vector<std::string> KNNClassifier::predict(std::vector<std::vector<float>> &x_pred) {
 
-
-    // ==============================================================================
-
-    //     // convert into a 1d matrix, normalize in the same block, calculate the nearest distance
-    //     std::vector<float> x_here(Nrows * Ncols ,0.0f);                                    // x_pred in 1d
-    //     std::vector<std::pair<double, int>> least_distance(nrows * Nrows, {0.0f, 0});   // least distances
-    //
-    //     for (int i = 0; i < Nrows; i++) {
-    //         for (int j = 0; j < Ncols; j++) {
-    //             x_here[i * Ncols + j] = X[i * Ncols + j] - (x_pred[i][j] - mean[j]) / std_dev[j];
-    //         }
-    //     }
-    //
-    //     if (distance_metric > 3 || distance_metric < 1) {
-    //         LOG_ERROR("Distance metric is undefined.");
-    //     }
-    //
-    // #pragma omp parallel for default(none) \
-    //         shared(distance_metric, nrows, ncols, X, Y, x_pred, least_distance, p)
-    //     for (size_t row = 0; row < nrows; row++) {
-    //         double distance = 0.0;
-    //
-    //         switch (distance_metric) {
-    //             case 1: // Manhattan distance
-    // #pragma omp simd reduction(+:distance)
-    //                 for (size_t col = 0; col < ncols; col++) {
-    //                     distance += std::abs(X[row * ncols + col] - x_pred[col]);
-    //                 }
-    //                 break;
-    //             case 2: // Euclidean distance
-    // #pragma omp simd reduction(+:distance)
-    //                 for (size_t col = 0; col < ncols; col++) {
-    //                     float diff = X[row * ncols + col] - x_pred[col];
-    //                     distance += diff * diff;
-    //                 }
-    //                 distance = std::sqrt(distance);
-    //                 break;
-    //             case 3: // Minkowski distance
-    // #pragma omp simd reduction(+:distance)
-    //                 for (size_t col = 0; col < ncols; col++) {
-    //                     distance += static_cast<float>(std::pow(std::abs(X[row * ncols + col] - x_pred[col]), p));
-    //                 }
-    //                 distance = std::pow(distance, 1.0/p);
-    //                 break;
-    //             default:
-    //                 continue;
-    //         }
-    //         least_distance[row] = {distance, Y[row]};
-    //     }
-    //
-    //     // finding the k-th element
-    //     std::ranges::nth_element(least_distance, least_distance.begin() + k);
-    //
-    //     // voting
-    //     std::unordered_map<std::string, int> voting;
-    //     for (size_t i=0; i<k; i++) {
-    //         voting[labels[least_distance[i].second]]++;
-    //     }
-    //     std::string answer;
-    //     int highest_vote = 0;
-    //     for (const auto &thing : voting) {
-    //         if (thing.second > highest_vote) {
-    //             highest_vote = thing.second;
-    //             answer = thing.first;
-    //         }
-    //     }
-    //
-    //     return result;
-    // }
 }
 #endif //KNNCLASSIFIER_HPP

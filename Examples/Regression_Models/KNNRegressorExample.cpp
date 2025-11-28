@@ -2,8 +2,11 @@
 // Created by skandan-c-y on 7/22/25.
 //
 
-#include "../Models/KNNRegressor.hpp"
-#include "utilities.hpp"
+#include <vector>
+
+// #include "../../../Glacier/Models/KNNRegressor.hpp"
+#include "../../Glacier/Models/KNNRegressor.hpp"
+#include "../../Glacier/Utils/utilities.hpp"
 
 int main() {
 
@@ -53,7 +56,7 @@ int main() {
 
 
     // Multiple Linear Regression Workflow
-    KNNRegressor iceberg(x_train, y_train);							                                            // initialize a model object
+    Glacier::Models::KNNRegressor iceberg(x_train, y_train);							                                            // initialize a model object
 
     int k = 4;
     std::string distance_metric = "Minkowski";
