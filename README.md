@@ -52,6 +52,43 @@ Use this block of code in the beginning of working file to enable ANSI colour lo
 ```
 
 
+## Demo
+```
+#include "Glacier/Models/MLmodel.hpp
+#include "Glacier/Utils/utilities.hpp"
+
+int main() {
+    std::vector<std::vector<float>> X, X_t;
+    std::vector<std::string> y, y_t;
+
+    Glacier::Utils::read_csv_c("../Datasets/training_dataset.csv", X, y, true);
+    Glacier::Utils::read_csv_c("../Datasets/testing_dataset.csv", X_t, y_t, true);
+
+    std::vector<std::vector<float>> X_p = {
+        {0.002020161, 43, 0, 0.228941685, 12500.0, 9, 0, 2, 0, 1.0}
+    };
+    std::vector<std::string> y_p = {"was_in_trouble"};
+
+    // Initialize models
+    Glacier::Models::MLmodel md(X, y);
+
+    // Hyperparameters
+    float hp1=1;
+
+    // Train
+    md.train(hp1);
+
+    // Predict sample
+    auto md_pred = md.predict(X_p);
+
+    // Analysis on validation set
+    md.analyze_2_targets(X_t, y_t);
+
+    return 0;
+}
+```
+
+
 ## Models benchmarked so far:
 
 |     Classifiers     | Regressors |
