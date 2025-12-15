@@ -42,7 +42,7 @@ int main() {
     // Benchmarking begins here
 
     std::cout << "Time taken: \n";
-    for (int metric = 1; metric < 3; metric++) {
+    for (int metric = 1; metric < 2; metric++) {
         for (int i=0; i<1; i++) {
             auto start_time_500 = std::chrono::high_resolution_clock::now();
 
