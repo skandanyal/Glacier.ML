@@ -8,17 +8,20 @@
 ```
 ```Licensed for viewing only. Not open-source. See LICENSE.txt for details.```
 
-Glacier is a header-only Machine Learning library written in C++, which contains all the machine learning models, related tests and datasets required to build a machine learning project using C++.
+
+Glacier.ML is a **performance-focused, header-only C++20 machine learning library**, designed to build and experiment with machine learning algorithms while emphasizing efficiency on modern multicore CPU architectures.
+
+It provides:
+
+* Core supervised machine learning algorithms implemented in modern C++
+* Performance-oriented implementations of common ML computations (e.g., distance metrics, reductions, matrix operations)
+* Plots, datasets, and reproducible benchmarks for empirical evaluation
+* Test scaffolding to verify numerical correctness and algorithmic behavior
+
 
 ![Status](https://img.shields.io/badge/Status-Work%20in%20Progress-yellow?style=for-the-badge&logo=github&logoColor=black)
 [![License](https://img.shields.io/badge/license-Glacier%20Custom%20License-blue?style=for-the-badge)](./LICENSE.txt)
 
-
-
-## Resources used:
-[![Statistical Learning (Stanford)](https://img.shields.io/badge/Statistical%20Learning-Stanford%20Online-red?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/playlist?list=PLoROMvodv4rPP6braWoRt5UCXYZ71GZIQ&si=0pQvuCwQpy7xMw9u)
-[![Applied Multivariate Statistical Analysis](https://img.shields.io/badge/Multivariate%20Analysis-NPTEL-orange?style=for-the-badge&logo=nptel&logoColor=white)](https://youtube.com/playlist?list=PLbMVogVj5nJRt-ZxRG1KRjxNoy7J_IaW2&si=CrIS5DlyWzsbJeCj)
-![Core ML Concepts](https://img.shields.io/badge/Core%20ML%20Concepts-4th%20Sem%20Lab-blueviolet?style=for-the-badge&logo=code&logoColor=white)
 
 ## Languages and Frameworks used:
 **Language:**
@@ -35,8 +38,14 @@ C++ 20
 ![CMake](https://img.shields.io/badge/CMake-06466B?style=for-the-badge\&logo=cmake\&logoColor=white)
 ![perf](https://img.shields.io/badge/Perf-E03C31?style=for-the-badge\&logo=linux\&logoColor=white)
 
-**Planned for future integration:**        
+**Integration underway:**        
 ![GTest](https://img.shields.io/badge/GTest-00BF63?style=for-the-badge\&logo=googletest\&logoColor=white)
+
+
+## Resources used:
+[![Statistical Learning (Stanford)](https://img.shields.io/badge/Statistical%20Learning-Stanford%20Online-red?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/playlist?list=PLoROMvodv4rPP6braWoRt5UCXYZ71GZIQ&si=0pQvuCwQpy7xMw9u)
+[![Applied Multivariate Statistical Analysis](https://img.shields.io/badge/Multivariate%20Analysis-NPTEL-orange?style=for-the-badge&logo=nptel&logoColor=white)](https://youtube.com/playlist?list=PLbMVogVj5nJRt-ZxRG1KRjxNoy7J_IaW2&si=CrIS5DlyWzsbJeCj)
+![Core ML Concepts](https://img.shields.io/badge/Core%20ML%20Concepts-4th%20Sem%20Lab-blueviolet?style=for-the-badge&logo=code&logoColor=white)
 
 
 ## If using Windows:
