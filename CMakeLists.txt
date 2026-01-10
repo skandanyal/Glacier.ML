@@ -1,11 +1,10 @@
-cmake_minimum_required(VERSION 3.28.3)
+cmake_minimum_required(VERSION 3.20)
 project(Glacier_ML LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(Boost_NO_SYSTEM_PATHS ON)
-
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=native -ffast-math -fopt-info-vec-optimized")
 
@@ -22,6 +21,8 @@ include_directories(${CMAKE_SOURCE_DIR}/Utils)
 
 find_package(OpenMP REQUIRED)
 find_package(BLAS REQUIRED)
+find_package(Boost REQUIRED)
+find_package(eigen REQUIRED)
 
 add_library(Glacier INTERFACE)
 target_include_directories(Glacier INTERFACE
@@ -40,14 +41,14 @@ if(BLAS_FOUND)
     target_link_libraries(Glacier INTERFACE BLAS::BLAS)
 endif()
 
-add_executable(KNNC Benchmarking_results/Classifiers/KNNClassifier/KNNClassifierExample.cpp)
-add_executable(KNNR Examples/Regression_Models/KNNRegressorExample.cpp)
-add_executable(LogR Benchmarking_results/Classifiers/LogisticRegression/LogisticRegressionExample.cpp)
-add_executable(MLR Examples/Regression_Models/MultipleLinearRegressionExample.cpp)
-add_executable(SLR Examples/Regression_Models/SimpleLinearRegressionExample.cpp)
-add_executable(SVMC Benchmarking_results/Classifiers/SVMClassifier/SVMClassifierExample.cpp)
-add_executable(SVMR Examples/Regression_Models/SVMRegressorExample.cpp)
-add_executable(all_models_classifiers Examples/Classification_Models/all_models_classifiers.cpp)
+add_executable(KNNC Benchmark_drivers/Classification_Models/KNNClassifierDriver.cpp)
+add_executable(KNNR Benchmark_drivers/Regression_Models/KNNRegressorDriver.cpp)
+add_executable(LogR Benchmark_drivers/Classification_Models/LogisticRegressionDriver.cpp)
+add_executable(MLR Benchmark_drivers/Regression_Models/MultipleLinearRegressionDriver.cpp)
+add_executable(SLR Benchmark_drivers/Regression_Models/SimpleLinearRegressionDriver.cpp)
+add_executable(SVMC Benchmark_drivers/Classification_Models/SVMClassifierDriver.cpp)
+add_executable(SVMR Benchmark_drivers/Regression_Models/SVMRegressorDriver.cpp)
+add_executable(all_models_classifiers Benchmark_drivers/Classification_Models/all_models_classifiers.cpp)
 
 target_link_libraries(KNNC PRIVATE Glacier)
 target_link_libraries(KNNR PRIVATE Glacier)

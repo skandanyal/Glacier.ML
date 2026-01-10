@@ -1,8 +1,8 @@
 //
 // Created by skandan-c-y on 7/14/25.
 //
-#include "../../../Glacier/Models/KNNClassifier.hpp"
-#include "../../../Glacier/Utils/utilities.hpp"
+#include "../../Glacier/Models/KNNClassifier.hpp"
+#include "../../Glacier/Utils/utilities.hpp"
 #include <chrono>
 #include <iostream>
 #include <vector>
