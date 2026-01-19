@@ -1,25 +1,26 @@
-//
-// Created by skandan-c-y on 9/3/25.
-//
-
 #ifndef LOGS_HPP
 #define LOGS_HPP
 
-// errors and exits
-#define LOG_ERROR(x) std::cerr << "[ERROR] " << x << " Exiting program here... \n"; std::exit(EXIT_FAILURE);
+#include <iostream>
+#include <cstdlib>
 
-// high level info while users are using it
-#define LOG_INFO(x) std::cout << "\033[36m[INFO]  \033[0m" << x << "\n";
+// 1. Errors: Always ON (Safety)
+#define LOG_ERROR(x) do { std::cerr << "[ERROR] " << x << " Exiting program here... \n"; std::exit(EXIT_FAILURE); } while(0)
 
-// time taken
-#define LOG_TIME(task, duration) std::cout << "\033[32m[TIME]  \033[0m" << task << " took " << duration << " seconds. \n";
-
-// deeper info to be used during development
-#if DEBUG_MODE
-    #define LOG_DEBUG(x, x_val) std::cout << "\033[35m[DEBUG] \033[0m" << x << ": " << x_val<< "\n";
-    #define LOG_UPDATE(x) std::cout << "\033[35m[DEBUG] \033[0m" << x << "\n";
+// 2. Info/Time: ON for Debug and Release, OFF for Benchmark
+#if defined(GLACIER_DEBUG) || defined(GLACIER_RELEASE)
+    #define LOG_INFO(x) std::cout << "\033[36m[INFO]  \033[0m" << x << "\n"
 #else
-    #define LOG_DEBUG(x, x_val);
+    #define LOG_INFO(x)
+#endif
+
+// 3. Debug/Update: ON only for Debug
+#ifdef GLACIER_DEBUG
+    #define LOG_DEBUG(x, x_val) std::cout << "\033[35m[DEBUG] \033[0m" << x << ": " << x_val << "\n"
+    #define LOG_UPDATE(x) std::cout << "\033[35m[DEBUG] \033[0m" << x << "\n"
+#else
+    #define LOG_DEBUG(x, x_val)
+    #define LOG_UPDATE(x)
 #endif
 
 #endif //LOGS_HPP
