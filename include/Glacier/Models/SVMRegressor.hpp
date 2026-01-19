@@ -1,13 +1,8 @@
 #ifndef SVMREGRESSORFLOW_HPP
 #define SVMREGRESSORFLOW_HPP
 
-#include <string>
 #include <vector>
-
 #include <Eigen/Dense>
-
-#include "Utils/logs.hpp"
-#include "Utils/utilities.hpp"
 
 namespace Glacier::Models {
     class SVMRegressor {
@@ -19,9 +14,10 @@ namespace Glacier::Models {
         Eigen::Index nrows{}, ncols{};
         Eigen::VectorXf w;
         std::vector<int> indices;
+        int no_threads{};
 
     public:
-        SVMRegressor(std::vector<std::vector<float>> &x_i, std::vector<float> &y_i);
+        SVMRegressor(std::vector<std::vector<float>> &x_i, std::vector<float> &y_i, int no_threads=0);
         void train(float lambda, float epsilon, int epochs);
         float predict(std::vector<float> &x_pred);
         std::vector<float> predict(std::vector<std::vector<float>> &x_pred);

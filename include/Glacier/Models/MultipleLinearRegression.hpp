@@ -13,9 +13,10 @@ namespace Glacier {
         Eigen::VectorXf Beta;
         Eigen::VectorXf Y;
         Eigen::MatrixXf E;
+        int no_threads{};
 
     public:
-        Multiple_Linear_Regression(std::vector<std::vector<float>> &X_i, std::vector<float> &Y_i);
+        Multiple_Linear_Regression(std::vector<std::vector<float>> &X_i, std::vector<float> &Y_i, int no_threads=0);
         void train();
         std::vector<float> predict(std::vector<std::vector<float>> &X_pred);
         float predict(std::vector<float> &X_pred);

@@ -1,4 +1,4 @@
-#include "Glacier/Models/SVMClassifierFlow.hpp"
+#include "Glacier/Models/SVMClassifier.hpp"
 #include "Glacier/Utils/utilities.hpp"
 #include "Glacier/Utils/logs.hpp"
 #include <iostream>
@@ -11,7 +11,15 @@
 using namespace Glacier::Models;
 
 // constructor
-SVMClassifier::SVMClassifier(std::vector<std::vector<float> > &X_i, std::vector<std::string> &Y_i) {
+SVMClassifier::SVMClassifier(std::vector<std::vector<float> > &X_i, std::vector<std::string> &Y_i, int no_threads) {
+
+    // set number of threads as given by the user. else, use half as many available
+    if (no_threads == 0) {
+        omp_set_num_threads(omp_get_max_threads()/2);
+    } else {
+        omp_set_num_threads(no_threads);
+    }
+    LOG_DEBUG("Number of threads", threads);
 
     // Check if the inputs are valid or not
     // check if input matrices are empty or not

@@ -2,16 +2,9 @@
 #define KNNREGRESSOR_HPP
 
 #pragma once
-#include <algorithm>
 #include <chrono>
 #include <string>
 #include <vector>
-#include <cmath>
-#include <iostream>
-
-#include "omp.h"
-#include "../Utils/logs.hpp"
-#include "../Utils/utilities.hpp"
 
 
 namespace Glacier::Models {
@@ -25,11 +18,12 @@ namespace Glacier::Models {
         int distance_metric{};
         int k{};
         int p{};
+        int no_threads{};
         size_t nrows{}, ncols{};
         // the {} braces are for the constructor to initialize these variables outside the constructor
 
     public:
-        KNNRegressor(std::vector<std::vector<float>> &X, std::vector<float> &Y);
+        KNNRegressor(std::vector<std::vector<float>> &X, std::vector<float> &Y, int no_threads=0);
         void train(int k, const std::string& distance_metric, int p=2);
         std::vector<float> predict(std::vector<std::vector<float>> &X_pred);
         float predict(std::vector<float> &X_pred);

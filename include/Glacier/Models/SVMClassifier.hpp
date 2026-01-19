@@ -19,10 +19,11 @@ namespace Glacier::Models {
         std::vector<std::string> labels;    // 2
         float lambda{};
         int epochs{};
+        int no_threads{};
 
 
     public:
-        SVMClassifier(std::vector<std::vector<float>> &x, std::vector<std::string> &y);
+        SVMClassifier(std::vector<std::vector<float>> &x, std::vector<std::string> &y, int no_threads=0);
         void train(float lambda, int epochs);
         std::string predict(std::vector<float> &x_pred);
         std::vector<std::string> predict(std::vector<std::vector<float>>& x_pred);

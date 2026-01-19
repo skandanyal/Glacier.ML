@@ -4,7 +4,6 @@
 #pragma once
 #include <vector>
 #include <Eigen/Dense>
-#include <chrono>
 
 namespace Glacier::Models {
     class Logistic_Regression {
@@ -20,9 +19,10 @@ namespace Glacier::Models {
         Eigen::VectorXf F_x_pred;           // (n x 1)
         Eigen::VectorXf P_x_pred;           // (n x 1)
         Eigen::MatrixXf Delta;              // (p x 1)
+        int no_threads{};
 
     public:
-        Logistic_Regression(std::vector<std::vector<float>> &x, std::vector<std::string> &y);
+        Logistic_Regression(std::vector<std::vector<float>> &x, std::vector<std::string> &y, int _no_threads=0);
         void train(float alpha, int iterations);
         std::string predict(std::vector<float> &x_pred);
         std::vector<std::string> predict(std::vector<std::vector<float>>& x_test);

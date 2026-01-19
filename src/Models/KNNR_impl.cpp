@@ -10,10 +10,14 @@
 
 namespace Glacier::Models {
     // constructor
-    inline KNNRegressor::KNNRegressor(std::vector<std::vector<float>> &X_i, std::vector<float> &Y_i) {
-        // check for the number of threads, cut it by two, and use those many
-        int threads = omp_get_max_threads() / 2;
-        omp_set_num_threads(threads);
+    inline KNNRegressor::KNNRegressor(std::vector<std::vector<float>> &X_i, std::vector<float> &Y_i, int no_threads) {
+        // set number of threads as given by the user. else, use half as many available
+        if (no_threads == 0) {
+            omp_set_num_threads(omp_get_max_threads()/2);
+        } else {
+            omp_set_num_threads(no_threads);
+        }
+        LOG_DEBUG("Number of threads", threads);
 
         // check for empty dataset
         if (X_i.empty() || Y_i.empty()) { // Check if the inputs are valid or not
@@ -97,7 +101,6 @@ namespace Glacier::Models {
     }
 
     inline void KNNRegressor::train(int k_i, const std::string &distance_metric_i, int p_i) {
-        auto train_start = std::chrono::high_resolution_clock::now();
 
         ////////////////////// Training begins here //////////////////////
 
@@ -115,11 +118,6 @@ namespace Glacier::Models {
         }
 
         ////////////////////// Training ends here ////////////////////////
-
-        auto train_end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::seconds>(train_end - train_start);
-
-        LOG_TIME("Training", duration.count());
         LOG_INFO("Model training is complete.");
         std::cout << "\n";
     }

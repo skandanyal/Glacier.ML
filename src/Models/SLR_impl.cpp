@@ -32,15 +32,8 @@ Simple_Linear_Regression::Simple_Linear_Regression(std::vector<float> &x, std::v
  * |_ calculate_c()
  */
 void Simple_Linear_Regression::train() {
-	auto train_start = std::chrono::high_resolution_clock::now();
-
 	m = calculate_m();
 	c = calculate_c();
-
-	auto train_end = std::chrono::high_resolution_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(train_end - train_start);
-
-	LOG_TIME("Training", duration.count());
 	LOG_INFO("Model training is complete.\n");
 }
 

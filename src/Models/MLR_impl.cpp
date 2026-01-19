@@ -5,7 +5,15 @@
 #include <chrono>
 
 // constructor
-inline Glacier::Multiple_Linear_Regression::Multiple_Linear_Regression(std::vector<std::vector<float>> &X_i, std::vector<float> &Y_i) : X(), Y(), Beta(), E() {
+inline Glacier::Multiple_Linear_Regression::Multiple_Linear_Regression(std::vector<std::vector<float>> &X_i, std::vector<float> &Y_i, int no_threads) : X(), Y(), Beta(), E() {
+
+    // set number of threads as given by the user. else, use half as many available
+    if (no_threads == 0) {
+        omp_set_num_threads(omp_get_max_threads()/2);
+    } else {
+        omp_set_num_threads(no_threads);
+    }
+    LOG_DEBUG("Number of threads", threads);
 
     // check for empty dataset
     if (X_i.empty() || Y_i.empty()) {                                 // Check if the inputs are valid or not
@@ -58,8 +66,6 @@ inline Glacier::Multiple_Linear_Regression::Multiple_Linear_Regression(std::vect
 };
 
 inline void Glacier::Multiple_Linear_Regression::train() {
-    auto train_start = std::chrono::high_resolution_clock::now();
-
     ////////////////////// Training begins here //////////////////////
 
     Beta = (X.transpose() * X).completeOrthogonalDecomposition().solve(X.transpose() * Y);
@@ -72,10 +78,6 @@ inline void Glacier::Multiple_Linear_Regression::train() {
 
     ////////////////////// Training ends here ////////////////////////
 
-    auto train_end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(train_end - train_start);
-
-    LOG_TIME("Training", duration.count());
     LOG_INFO("Model training is complete.");
     std::cout << "\n";
 }

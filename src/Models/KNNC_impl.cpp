@@ -1,19 +1,21 @@
 #include "Glacier/Models/KNNClassifier.hpp"
-#include "Glacier/Utils/logs.hpp"   // Your logging utilities
+#include "Glacier/Utils/logs.hpp"
 #include <cmath>
 #include <omp.h>
 #include <algorithm>
 #include <iostream>
 #include <unordered_map>
 #include <map>
-#include <chrono>
 
 using namespace Glacier::Models;
 
-KNNClassifier::KNNClassifier(std::vector<std::vector<float>> &X_i, std::vector<std::string> &Y_i) {
-    // check for the number of threads, cut it by two, and use those many
-    int threads = omp_get_max_threads() / 2;
-    omp_set_num_threads(threads);
+KNNClassifier::KNNClassifier(std::vector<std::vector<float>> &X_i, std::vector<std::string> &Y_i, int no_threads) {
+    // set number of threads as given by the user. else, use half as many available
+    if (no_threads == 0) {
+        omp_set_num_threads(omp_get_max_threads()/2);
+    } else {
+        omp_set_num_threads(no_threads);
+    }
     LOG_DEBUG("Number of threads", threads);
 
     // check if input matrices are empty or not
@@ -26,7 +28,6 @@ KNNClassifier::KNNClassifier(std::vector<std::vector<float>> &X_i, std::vector<s
     if (X_i.size() != Y_i.size()) {
         LOG_ERROR("Input and output data must have the same size.");
     }
-
 
     // check for empty dataset
     for (auto &row : X_i)
@@ -127,10 +128,6 @@ shared(mean, std_dev, nrows, ncols, X)
 }
 
 void KNNClassifier::train(int k_i, std::string& distance_metric_i, int p_i) {
-    auto train_start = std::chrono::high_resolution_clock::now();
-
-    ////////////////////// Training begins here //////////////////////
-
     if (k_i % 2 == 0) k = k_i - 1; // always store an odd value of k
     else k = k_i;
 
@@ -149,9 +146,6 @@ void KNNClassifier::train(int k_i, std::string& distance_metric_i, int p_i) {
     LOG_UPDATE("Hyperparameters set. ");
 
     ////////////////////// Training ends here ////////////////////////
-
-    auto train_end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::seconds>(train_end - train_start);
 
     LOG_INFO("Model training is complete.");
     std::cout << "\n";

@@ -46,9 +46,9 @@ target_link_libraries(Glacier
 # ----------------------------
 target_compile_options(Glacier
         PRIVATE
-        $<$<CONFIG:Debug>:-g -O0>
-        $<$<CONFIG:Release>:-O3 -march=native -ffast-math>
-        $<$<CONFIG:Benchmark>:-O3 -march=native -g -ffast-math>
+        $<$<CONFIG:Debug>:-g;-O0>
+        $<$<CONFIG:Release>:-O3;-march=native;-ffast-math>
+        $<$<CONFIG:Benchmark>:-O3;-march=native;-g;-ffast-math>
 )
 
 # ----------------------------

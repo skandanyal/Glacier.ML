@@ -3,24 +3,36 @@
 #include "Glacier/Models/LogisticRegression.hpp"
 #include <iostream>
 #include <map>
+#include "omp.h"
 
 
 using namespace Glacier::Models;
 
 // constructor
-Logistic_Regression::Logistic_Regression(std::vector<std::vector<float>> &X_i, std::vector<std::string> &Y_i) : X(), Y(), Beta(), F_x() {
-        // check for empty dataset
+Logistic_Regression::Logistic_Regression(std::vector<std::vector<float>> &X_i, std::vector<std::string> &Y_i, int no_threads) : X(), Y(), Beta(), F_x() {
+
+    // set number of threads as given by the user. else, use half as many available
+    if (no_threads == 0) {
+        omp_set_num_threads(omp_get_max_threads()/2);
+    } else {
+        omp_set_num_threads(no_threads);
+    }
+    LOG_DEBUG("Number of threads", threads);
+
+    // check for empty dataset
     if (X_i.empty() || Y_i.empty()) {                                                                                   // Check if the inputs are valid or not
         LOG_ERROR("Input data cannot be empty.");
     }
 
     // check for inconsistency in the dataset
+#pragma omp parallel for
     for (auto &row : X_i)                                                                                  // Check if all the rows are of the same size
         if (row.size() != X_i[0].size()) {
             LOG_ERROR("Row sizes not consistent.");
         }
 
     // check for infinite values in the dataset
+#pragma omp parallel for schedule(static) collapse(2)
     for (size_t i = 0; i < X_i.size(); i++) {
         for (size_t j = 0; j < X_i[i].size(); j++) {
             if (!std::isfinite(X_i[i][j]))
@@ -43,6 +55,7 @@ Logistic_Regression::Logistic_Regression(std::vector<std::vector<float>> &X_i, s
     X.col(0) = Eigen::VectorXf::Ones(nrows);
 
     // populating Eigen X matrix with the data
+#pragma omp parallel for schedule(static) collapse(2)
     for (Eigen::Index row = 0; row < nrows; row++)
         for (Eigen::Index col = 0; col < ncols; col++)
             X(row, col + 1) = X_i[row][col];                                                                            // X matrix, with 0th column as 1
@@ -55,6 +68,7 @@ Logistic_Regression::Logistic_Regression(std::vector<std::vector<float>> &X_i, s
     std_dev = Eigen::VectorXf::Zero(ncols);
 
     // normalize X
+#pragma omp parallel for
     for (Eigen::Index colm = 0; colm < ncols; colm++) {
         mean(colm) = X.col(colm + 1).mean();
         std_dev(colm) = std::sqrt((X.col(colm + 1).array() - mean(colm)).square().sum() / X.rows());
@@ -83,6 +97,7 @@ Logistic_Regression::Logistic_Regression(std::vector<std::vector<float>> &X_i, s
     if (labels[0] > labels[1]) std::swap(labels[0], labels[1]);
 
     // populate the Eigen Y matrix with the data
+#pragma omp parallel for schedule(static)
     for (size_t i = 0; i < Y_i.size(); i++) {
         if (Y_i[i] == labels[0]) Y(i) = 0;
         else if (Y_i[i] == labels[1]) Y(i) = 1;
@@ -97,8 +112,6 @@ Logistic_Regression::Logistic_Regression(std::vector<std::vector<float>> &X_i, s
 }
 
 void Logistic_Regression::train(float alpha, int iterations) {
-    LOG_INFO("Training initiated...");
-    auto train_start = std::chrono::high_resolution_clock::now();
 
     ////////////////////// Training begins here //////////////////////
 
@@ -116,6 +129,7 @@ void Logistic_Regression::train(float alpha, int iterations) {
         // step 1 - calculate F_x and P_x
         P_x.resize(X.rows());
         F_x = X * Beta;
+#pragma omp parallel for
         for(int j=0; j<F_x.size(); j++){
             P_x(j) = std::clamp(sigmoid(F_x(j)), 1e-8f, 1.0f - 1e-8f);
         }
@@ -128,6 +142,7 @@ void Logistic_Regression::train(float alpha, int iterations) {
 
         // logging the loss
         prev_loss = loss;
+#pragma omp parallel reduction(+:loss)
         for (Eigen::Index row=0; row < Y.size(); row++) {
             float prob_val = std::clamp(P_x(row), 1e-6f, 1.0f - 1e-6f);
             loss += -1 * (Y[row] * std::log(prob_val) + (1 - Y[row]) * std::log(1 - prob_val));
@@ -150,10 +165,6 @@ void Logistic_Regression::train(float alpha, int iterations) {
 
     ////////////////////// Training ends here /////////////////////////
 
-    auto train_end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(train_end - train_start);
-
-    LOG_TIME("Training", duration.count());
     LOG_INFO("Model training is complete.");
     std::cout << "\n";
 

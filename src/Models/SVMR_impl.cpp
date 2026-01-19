@@ -1,7 +1,6 @@
-#include "Glacier/Models/SVMRegressorFlow.hpp"
+#include "Glacier/Models/SVMRegressor.hpp"
 #include "Glacier/Utils/logs.hpp"
 #include <cmath>
-#include <chrono>
 #include <iostream>
 #include <numeric>
 #include <random>
@@ -13,10 +12,13 @@ using namespace Glacier::Models;
 
 
 // constructor
-SVMRegressor::SVMRegressor(std::vector<std::vector<float>> &X_i, std::vector<float> &Y_i) {
-    // check for the number of threads, cut it by two, and use those many
-    int threads = omp_get_max_threads() / 2;
-    omp_set_num_threads(threads);
+SVMRegressor::SVMRegressor(std::vector<std::vector<float>> &X_i, std::vector<float> &Y_i, int no_threads) {
+    // set number of threads as given by the user. else, use half as many available
+    if (no_threads == 0) {
+        omp_set_num_threads(omp_get_max_threads()/2);
+    } else {
+        omp_set_num_threads(no_threads);
+    }
     LOG_DEBUG("Number of threads", threads);
 
     // Check if the inputs are valid or not
@@ -93,8 +95,6 @@ SVMRegressor::SVMRegressor(std::vector<std::vector<float>> &X_i, std::vector<flo
 }
 
 void SVMRegressor::train(float lambda, float epsilon, int epochs) {
-    auto train_start = std::chrono::high_resolution_clock::now();
-
     ////////////////////// Training begins here //////////////////////
 
     // noting the dimensions of the weight vector, whose last element represents the bias term
@@ -158,11 +158,6 @@ void SVMRegressor::train(float lambda, float epsilon, int epochs) {
     }
 
     ////////////////////// Training ends here ////////////////////////
-
-    auto train_end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::seconds>(train_end - train_start);
-
-    LOG_TIME("Training", duration.count());
     LOG_INFO("Model training is complete.");
     std::cout << "\n";
 }
