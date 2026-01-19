@@ -6,7 +6,6 @@
 ╚██████╔╝███████╗██║  ██║╚██████╗██║███████╗██║  ██║██╗██║ ╚═╝ ██║███████╗
  ╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝╚══════╝
 ```
-```Licensed for viewing only. Not open-source. See LICENSE.txt for details.```
 
 
 Glacier.ML is a **performance-focused, header-only C++20 machine learning library**, designed to build and experiment with machine learning algorithms while emphasizing efficiency on modern multicore CPU architectures.
@@ -27,10 +26,10 @@ It provides:
 **Language:**
 C++ 20
 
+[//]: # (Deprecated the mention of Boost from the README)
 **Core stack:**     
-![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge\&logo=c%2B%2B\&logoColor=white)
-![Eigen](https://img.shields.io/badge/Eigen-1F1232?style=for-the-badge\&logo=matrix\&logoColor=white)
-![Boost](https://img.shields.io/badge/Boost-1F1232?style=for-the-badge\&logo=code\&logoColor=white)
+![C++](https://img.shields.io/badge/C++20-00599C?style=for-the-badge\&logo=c%2B%2B\&logoColor=white)
+![Eigen](https://img.shields.io/badge/Eigen3.0-1F1232?style=for-the-badge\&logo=matrix\&logoColor=white)
 ![OpenMP](https://img.shields.io/badge/OpenMP-26667F?style=for-the-badge\&logo=openmp\&logoColor=white)
 ![OpenBLAS](https://img.shields.io/badge/OpenBLAS-E00?style=for-the-badge\&logo=openblas\&logoColor=white)
 
@@ -42,10 +41,31 @@ C++ 20
 ![GTest](https://img.shields.io/badge/GTest-00BF63?style=for-the-badge\&logo=googletest\&logoColor=white)
 
 
-## Resources used:
-[![Statistical Learning (Stanford)](https://img.shields.io/badge/Statistical%20Learning-Stanford%20Online-red?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/playlist?list=PLoROMvodv4rPP6braWoRt5UCXYZ71GZIQ&si=0pQvuCwQpy7xMw9u)
-[![Applied Multivariate Statistical Analysis](https://img.shields.io/badge/Multivariate%20Analysis-NPTEL-orange?style=for-the-badge&logo=nptel&logoColor=white)](https://youtube.com/playlist?list=PLbMVogVj5nJRt-ZxRG1KRjxNoy7J_IaW2&si=CrIS5DlyWzsbJeCj)
-![Core ML Concepts](https://img.shields.io/badge/Core%20ML%20Concepts-4th%20Sem%20Lab-blueviolet?style=for-the-badge&logo=code&logoColor=white)
+## Migrating the library architecture (As of Jan 1, 2026) 
+Glacier.ML is migrating from a header-only architecture to a linker-object library architecture. This decision was made 
+deliberately to accommodate the growing complexity in developing the library's modules. This can be greatly solved by 
+moving from a monolithic header-only architecture, to a modular architecture as that of a linked-object 
+architecture, improving binary stability.
+
+A header-only library involves declaring all the functions and their definitions in a singular `.hpp` file. While the 
+functions are all declared at the beginning of the file, they are also defined in the same file, using the `inline` keyword
+before the function definition. The project began with this architecture to explore the scope while maintaining 
+architectural simplicity, allowing the author to focus more on the logic and minimally on their arrangement. 
+
+Whereas using a linked-object library architecture allows the same header-file to be broken down into multiple smaller 
+chunks of logic with files of their own. This in turn allows for faster refactoring and lesser compile time after the initial 
+build by the end user. The consumer will now have to use a complex build command, which can always be overcome by
+a correctly written CMakeLists file. But it is the developer who benefits the most, where clarity and the ability to refactor
+the code faster, beat the other trade-offs. 
+
+Once the migration is complete, the author plans on exploring *Link Time Optimizations* options to compensate for the performance 
+drop derived from the employed architecture. 
+
+
+## Models benchmarked so far:
+* Logistic Regression
+* KNN Classifier
+* SVM Classifier
 
 
 ## If using Windows:
@@ -96,15 +116,6 @@ int main() {
     return 0;
 }
 ```
-
-
-## Models benchmarked so far:
-
-|     Classifiers     | Regressors |
-|:-------------------:|:----------:|
-| Logistic Regression |     -      |
-|   KNN Classifier    |     -      |
-|   SVM Classifier    |     -      |
 
 
 ## Models benchmarked on:
