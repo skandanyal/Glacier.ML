@@ -7,7 +7,7 @@
 #include <iostream>
 #include <vector>
 
-// using namespace Glacier;
+// using namespace include;
 int main() {
     std::vector<std::vector<float>> x_val, x_train_500;
     // x_train_1000, x_train_5000, x_train_10000, x_train_50000, x_train_100000, x_train_140000;
