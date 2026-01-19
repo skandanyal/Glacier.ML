@@ -37,9 +37,6 @@ C++ 20
 ![CMake](https://img.shields.io/badge/CMake-06466B?style=for-the-badge\&logo=cmake\&logoColor=white)
 ![perf](https://img.shields.io/badge/Perf-E03C31?style=for-the-badge\&logo=linux\&logoColor=white)
 
-**Integration underway:**        
-![GTest](https://img.shields.io/badge/GTest-00BF63?style=for-the-badge\&logo=googletest\&logoColor=white)
-
 
 ## Migrating the library architecture (As of Jan 1, 2026) 
 Glacier.ML is migrating from a header-only architecture to a linker-object library architecture. This decision was made 
