@@ -22,7 +22,7 @@ namespace Glacier::Models {
         int no_threads{};
 
     public:
-        Logistic_Regression(std::vector<std::vector<float>> &x, std::vector<std::string> &y, int _no_threads=0);
+        Logistic_Regression(std::vector<std::vector<float>> &x, std::vector<std::string> &y, int no_threads=0);
         void train(float alpha, int iterations);
         std::string predict(std::vector<float> &x_pred);
         std::vector<std::string> predict(std::vector<std::vector<float>>& x_test);

@@ -219,7 +219,6 @@ shared(distance_metric, nrows, ncols, X, Y, x_pred, least_distance, p)
             highest_vote = thing.second;
             answer = thing.first;
         }
-
     }
 
     ////////////////////// Prediction ends here //////////////////////
@@ -233,7 +232,6 @@ std::vector<std::string> KNNClassifier::predict(std::vector<std::vector<float>>&
     }
 
     size_t Nrows = x_pred.size();
-    size_t Ncols = x_pred[0].size();
 
     LOG_DEBUG("Number of rows in x_pred", Nrows);
     LOG_DEBUG("Number of columns in x_pred", Ncols);

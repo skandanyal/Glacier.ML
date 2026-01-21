@@ -38,8 +38,6 @@ Logistic_Regression::Logistic_Regression(std::vector<std::vector<float>> &X_i, s
             if (!std::isfinite(X_i[i][j]))
                 std::cout << "[BAD VALUE] X_i[" << i << "][" << j << "] = " << X_i[i][j] << "\n";
         }
-        // if (!std::isfinite(Y_i[i]))
-        //     std::cout << "[BAD VALUE] Y_i[" << i << "] = " << Y_i[i] << "\n";   // not applicable here in classification
     }
 
     Eigen::Index nrows = X_i.size();
