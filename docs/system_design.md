@@ -1,0 +1,1 @@
+Explain what a Linked object architecture is
