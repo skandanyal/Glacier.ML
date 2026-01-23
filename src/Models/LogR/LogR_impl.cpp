@@ -5,6 +5,20 @@
 #include <map>
 #include "omp.h"
 
+// initialize Beta
+// for iter:
+//     z = X * Beta
+//     p = sigmoid(z)
+//     loss = cross_entropy(p, Y)
+//     grad = Xᵀ (p − Y) / n
+//     Beta -= lr * grad
+// until converged
+
+// Golden core
+// z = X * beta
+// p = sigmoid(z)
+// loss = cross_entropy(p, y)
+// grad = Xᵀ (p − y) / n
 
 using namespace Glacier::Models;
 
@@ -194,7 +208,7 @@ std::string Logistic_Regression::predict(std::vector<float> &x_pred) {
         x(i+1) = (x(i+1) - mean(i)) / std_dev(i);
 
     float ans = x.dot(Beta);
-    if (ans < 0.5f)
+    if (ans < 0.0f)
         return labels[0];
     return labels[1];
 
@@ -242,7 +256,7 @@ std::vector<std::string> Logistic_Regression::predict(std::vector<std::vector<fl
 
     std::vector<std::string> result(nrows);
     for (Eigen::Index i = 0; i < nrows; i++) {
-        if (P_x_pred(i) < 0.5f) result[i] = labels[0];
+        if (P_x_pred(i) < 0.0f) result[i] = labels[0];
         else result[i] = labels[1];
     }
 
@@ -309,7 +323,7 @@ void Logistic_Regression::print_Beta_values() {
     std::cout << "\n";
 }
 
-float Logistic_Regression::sigmoid(float x) {
+inline float Logistic_Regression::sigmoid (float x) {
     float y = std::clamp(x, -100.0f, 100.0f);
     return 1 / (1 + std::exp(-1 * y));
 }
