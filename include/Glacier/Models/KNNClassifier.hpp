@@ -13,7 +13,6 @@ namespace Glacier::Models {
         std::vector<float> X;      // (n x p)
         std::vector<int> Y;                     // (n x 1)
         std::vector<std::string> labels;        // (p x 1)
-        // std::pair<double, float> Dist;
         std::vector<float> mean;                // (p x 1)
         std::vector<float> std_dev;             // (p x 1)
         int distance_metric{};
