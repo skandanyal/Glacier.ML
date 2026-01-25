@@ -1,33 +1,39 @@
-//
-// Created by skandan-c-y on 1/23/26.
-//
-
 #ifndef GLACIER_ML_LOGRCORE_HPP
 #define GLACIER_ML_LOGRCORE_HPP
 
 #pragma once
 #include <Eigen/Dense>
 
-class LogRCore {
-public:
-    LogRCore (int n_features);
+namespace Glacier::Core {
+    class LogRCore {
 
-    void fit (
-        Eigen::MatrixXf &X,
-        Eigen::MatrixXf &Y,
-        float lr,
-        int iterations
-    );
+    private:
+        // model parameter
+        Eigen::VectorXf beta_;             // (p x 1)
+        Eigen::VectorXf z_;                // (n x 1)
+        Eigen::VectorXf p_;                // (n x 1)
+        Eigen::VectorXf F_x_pred_;           // (n x 1)
+        Eigen::VectorXf P_x_pred_;           // (n x 1)
+        Eigen::VectorXf delta_;              // (p x 1)
 
-    Eigen::MatrixXf predict_proba (const Eigen::MatrixXf &X) const;
-    Eigen::MatrixXi predict (const Eigen::MatrixXi &X) const;
 
-private:
-    Eigen::VectorXf beta;
-};
+    public:
+    LogRCore(long n_features);
 
-#endif //GLACIER_ML_LOGRCORE_HPP
+    void train(const Eigen::MatrixXf &X,
+        const Eigen::VectorXf &Y,
+        const float lr,
+        const int iterations);
 
+    Eigen::MatrixXf predict_proba(const Eigen::MatrixXf &X,
+        const float decision_boundary);
+
+    Eigen::MatrixXi predict(const Eigen::MatrixXi &X,
+        const float decision_boundary);
+    };
+}
+
+#endif // GLACIER_ML_LOGRCORE_HPP
 
 // INPUT:
 // - X: (n × d) matrix, normalized, includes bias column
@@ -39,7 +45,7 @@ private:
 // - No NaNs or Infs
 //
 // PROVIDES:
-// - fit()
+// - fit() / here, train()
 // - predict_proba()
 // - predict()
 //

@@ -1,9 +1,8 @@
 #include "Glacier/Utils/utilities.hpp"
 #include "Glacier/Utils/logs.hpp"
 #include "Glacier/Models/LogisticRegression.hpp"
-#include <iostream>
+#include "Models/LogR/core/LogRCore.hpp"
 #include <map>
-#include "omp.h"
 
 // initialize Beta
 // for iter:
@@ -20,10 +19,23 @@
 // loss = cross_entropy(p, y)
 // grad = Xᵀ (p − y) / n
 
-using namespace Glacier::Models;
+using namespace Glacier;
 
 // constructor
-Logistic_Regression::Logistic_Regression(std::vector<std::vector<float>> &X_i, std::vector<std::string> &Y_i, int no_threads) : X(), Y(), Beta(), F_x() {
+Models::Logistic_Regression::Logistic_Regression
+        (std::vector<std::vector<float>> &X_i,
+        std::vector<std::string> &Y_i,
+        int no_threads) :
+    nrows_(X_i.size()),
+    ncols_(X_i[0].size()),
+    X_(nrows_, ncols_ + 1), // +1 for the bias colm.
+    Y_(nrows_),
+    mean_(ncols_),
+    std_dev_(ncols_),
+    core_(ncols_ + 1)
+{
+
+    // the only job here is to prepare the X and Y matrices for the train fn to work upon
 
     // set number of threads as given by the user. else, use half as many available
     if (no_threads == 0) {
@@ -33,20 +45,23 @@ Logistic_Regression::Logistic_Regression(std::vector<std::vector<float>> &X_i, s
     }
     LOG_DEBUG("Number of threads", threads);
 
+    // nrows_, ncols_
+    LOG_DEBUG("Number of rows in X before adding the bias column", nrows_);
+    LOG_DEBUG("Number of columns in X before adding the bias column", ncols_);
+
     // check for empty dataset
-    if (X_i.empty() || Y_i.empty()) {                                                                                   // Check if the inputs are valid or not
+    if (X_i.empty() || Y_i.empty()) {
         LOG_ERROR("Input data cannot be empty.");
     }
 
     // check for inconsistency in the dataset
-#pragma omp parallel for
-    for (auto &row : X_i)                                                                                  // Check if all the rows are of the same size
+    for (auto &row : X_i) {
         if (row.size() != X_i[0].size()) {
             LOG_ERROR("Row sizes not consistent.");
         }
+    }
 
     // check for infinite values in the dataset
-#pragma omp parallel for schedule(static) collapse(2)
     for (size_t i = 0; i < X_i.size(); i++) {
         for (size_t j = 0; j < X_i[i].size(); j++) {
             if (!std::isfinite(X_i[i][j]))
@@ -54,141 +69,84 @@ Logistic_Regression::Logistic_Regression(std::vector<std::vector<float>> &X_i, s
         }
     }
 
-    Eigen::Index nrows = X_i.size();
-    Eigen::Index ncols = X_i[0].size();
-    LOG_DEBUG("Number of rows in X before adding 1 column", nrows);
-    LOG_DEBUG("Number of columns in X before adding 1 column", ncols);
-    std::cout << "\n";
-
-    X = Eigen::MatrixXf(nrows, ncols + 1);                                                                          // use this method to resize an eigen matrix;
-    Y = Eigen::VectorXf(nrows);                                                                                         // use (nrows, 1) to ensure column vector
-
-    // initialize X
-    X.col(0) = Eigen::VectorXf::Ones(nrows);
+    // bias column in X_
+    X_.col(0) = Eigen::VectorXf::Ones(nrows_);
 
     // populating Eigen X matrix with the data
-#pragma omp parallel for schedule(static) collapse(2)
-    for (Eigen::Index row = 0; row < nrows; row++)
-        for (Eigen::Index col = 0; col < ncols; col++)
-            X(row, col + 1) = X_i[row][col];                                                                            // X matrix, with 0th column as 1
+    for (Eigen::Index row = 0; row < nrows_; row++)
+        for (Eigen::Index col = 0; col < ncols_; col++)
+            // X matrix, with 0th column as 1
+            X_(row, col + 1) = X_i[row][col];
     LOG_DEBUG("Number of rows in x_train", X.rows());
     LOG_DEBUG("Number of cols in x_train", X.cols());
     std::cout << "\n";
 
-    // calculate mean and standard deviation for the given dataset
-    mean = Eigen::VectorXf::Zero(ncols);
-    std_dev = Eigen::VectorXf::Zero(ncols);
-
     // normalize X
-#pragma omp parallel for
-    for (Eigen::Index colm = 0; colm < ncols; colm++) {
-        mean(colm) = X.col(colm + 1).mean();
-        std_dev(colm) = std::sqrt((X.col(colm + 1).array() - mean(colm)).square().sum() / X.rows());
+    // mean_ and std_dev_ have been resized already
+    for (long colm = 0; colm < ncols_; colm++) {
+        mean_(colm) = X_.col(colm + 1).mean();
+        std_dev_(colm) = std::sqrt((X_.col(colm + 1).array() - mean_(colm)).square().sum() / X_.rows());
 
-        if (std_dev(colm) == 0)
-            std_dev(colm) = 1e-8;
+        if (std_dev_(colm) == 0)
+            std_dev_(colm) = 1e-8;
 
         // normalization
-        X.col(colm + 1) = (X.col(colm + 1).array() - mean(colm)) / std_dev(colm);
+        X_.col(colm + 1) = (X_.col(colm + 1).array() - mean_(colm)) / std_dev_(colm);
     }
+    // X_ is now ready to be used:
+    // X_1[0] is the bias column, rest are all normalized featured
 
     // initialize Y
     std::map<std::string, bool> seen;
-    for (std::string target : Y_i)
+    for (const std::string& target : Y_i)
         seen[target] = true;
     for (auto &[key, _] : seen)
-        labels.push_back(key);
+        labels_.push_back(key);
 
     // check for the number of target classes
-    if (labels.size() < 2) {
-        LOG_ERROR("Less than two classification classes detected. Binary classification requires the dataset to have two target classes.");
-    } else if (labels.size() > 2) {
-        LOG_ERROR("More than two classification classes detected. Binary classification requires the dataset to have two target classes.");
+    if (labels_.size() < 2) {
+        LOG_ERROR("Less than two classification classes detected. Binary classification requires the dataset to have two"
+                  " target classes.");
+    } else if (labels_.size() > 2) {
+        LOG_ERROR("More than two classification classes detected. Binary classification requires the dataset to have two"
+                  " target classes.");
     }
 
-    if (labels[0] > labels[1]) std::swap(labels[0], labels[1]);
+    // the labels are organized in the ascending order
+    if (labels_[0] > labels_[1]) std::swap(labels_[0], labels_[1]);
 
     // populate the Eigen Y matrix with the data
-#pragma omp parallel for schedule(static)
-    for (size_t i = 0; i < Y_i.size(); i++) {
-        if (Y_i[i] == labels[0]) Y(i) = 0;
-        else if (Y_i[i] == labels[1]) Y(i) = 1;
+    for (auto i = 0; i < Y_i.size(); i++) {
+        if (Y_i[i] == labels_[0]) Y_(i) = 0;
+        else if (Y_i[i] == labels_[1]) Y_(i) = 1;
     }
+    // Y_ is ready to be used
     LOG_DEBUG("Size of labels", labels.size());
     LOG_DEBUG("Number of rows in y_train", Y.rows());
     LOG_DEBUG("Number of cols in y_train", Y.cols());
     std::cout << "\n";
-
-    // initialize Beta
-    Beta = Eigen::VectorXf::Zero(X.cols());
 }
 
-void Logistic_Regression::train(float alpha, int iterations) {
+void Models::Logistic_Regression::train(
+    const float lr,
+    const int iterations)
+{
 
-    ////////////////////// Training begins here //////////////////////
-
-    LOG_DEBUG("Number of rows in Beta", Beta.rows());
-    LOG_DEBUG("Number of cols in Beta", Beta.cols());
-    std::cout << "\n";
+    lr_ = lr;
+    iterations_ = iterations;
 
     // training loop
-    LOG_INFO("Loss measures");
-    double loss = 0, prev_loss = 0;
-    for (int i = 1; i <= iterations; i++) {
-        loss = 0.0f;  // reset this for every loop
-
-        //please, this isn't chatgpt's work. it gives a far more concise code to do the same...
-        // step 1 - calculate F_x and P_x
-        P_x.resize(X.rows());
-        F_x = X * Beta;
-#pragma omp parallel for
-        for(int j=0; j<F_x.size(); j++){
-            P_x(j) = std::clamp(sigmoid(F_x(j)), 1e-8f, 1.0f - 1e-8f);
-        }
-
-        // step 2 - calculate error and gradient(delta)
-        Delta = X.transpose() * (P_x - Y);
-
-        // step 3 - update the beta matrix
-        Beta -= alpha * Delta;
-
-        // logging the loss
-        prev_loss = loss;
-#pragma omp parallel reduction(+:loss)
-        for (Eigen::Index row=0; row < Y.size(); row++) {
-            float prob_val = std::clamp(P_x(row), 1e-6f, 1.0f - 1e-6f);
-            loss += -1 * (Y[row] * std::log(prob_val) + (1 - Y[row]) * std::log(1 - prob_val));
-        }
-        loss /= Y.size();
-
-        if (i % 500 == 0) {
-            // loss = std::clamp(loss, 0.0001, 0.9999);
-            LOG_DEBUG("Loss at iteration " + std::to_string(i), loss);
-        }
-
-        if (i > 10)
-            if (loss < 0.002f && prev_loss - loss < 1e-6) {
-                LOG_INFO("Early stopping engaged at step: " + std::to_string(i));
-                break;
-            }
-    }
+    core_.train(X_, Y_, lr_, iterations_);
     LOG_DEBUG("Final loss at the end ", loss);
     std::cout << "\n";
 
-    ////////////////////// Training ends here /////////////////////////
-
     LOG_INFO("Model training is complete.");
     std::cout << "\n";
-
-    /*
-     * FURTHER ENHANCEMENTS:
-     * 1. (done) log the loss at every iteration, or after series of iterations
-     * 2. (done) reduce or maximise alpha based on the loss
-     * 3. (somehow does not work as intended) add an early stopping mechanism (hard code this, no need to let the user decide the threshold)
-     */
 }
 
-std::string Logistic_Regression::predict(std::vector<float> &x_pred) {
+std::string Models::Logistic_Regression::predict(
+    std::vector<float> &x_pred)
+{
     LOG_INFO("Singular prediction initiated...");
 
     if (x_pred.size() + 1 != Beta.cols()) {
@@ -227,35 +185,35 @@ std::vector<std::string> Logistic_Regression::predict(std::vector<std::vector<fl
 
     ////////////////////// Prediction begins here //////////////////////
 
-    Eigen::Index nrows = X_test.size();
-    Eigen::Index ncols = X_test[0].size();
-    LOG_DEBUG("Number of rows in X_test", nrows);
-    LOG_DEBUG("Number of columns in X_test", ncols);
+    Eigen::Index nrows_ = X_test.size();
+    Eigen::Index ncols_ = X_test[0].size();
+    LOG_DEBUG("Number of rows in X_test", nrows_);
+    LOG_DEBUG("Number of columns in X_test", ncols_);
     std::cout << "\n";
 
-    if (mean.size() != ncols) {
+    if (mean.size() != ncols_) {
         LOG_ERROR("Mismatch in mean/std_dev size. Possible unnormalized feature set.");
     }
 
-    Eigen::MatrixXf X_pred(nrows, ncols + 1);
-    X_pred.col(0) = Eigen::VectorXf::Ones(nrows);
+    Eigen::MatrixXf X_pred(nrows_, ncols_ + 1);
+    X_pred.col(0) = Eigen::VectorXf::Ones(nrows_);
 
-    for (Eigen::Index row = 0; row < nrows; row++)
-        for (Eigen::Index col = 0; col < ncols; col++)
+    for (Eigen::Index row = 0; row < nrows_; row++)
+        for (Eigen::Index col = 0; col < ncols_; col++)
             X_pred(row, col + 1) = X_test[row][col];                                                                    // X matrix, with 0th column as 1
 
     // normalizing the X_pred matrix
-    for (int colm = 0; colm < ncols; colm++)
+    for (int colm = 0; colm < ncols_; colm++)
         X_pred.col(colm + 1) = (X_pred.col(colm + 1).array() - mean(colm)) / std_dev(colm);
 
     Eigen::VectorXf F_x_pred = X_pred * Beta;
-    P_x_pred.resize(nrows);
-    for(int i=0; i < nrows; i++){
+    P_x_pred.resize(nrows_);
+    for(int i=0; i < nrows_; i++){
         P_x_pred(i) = std::clamp(sigmoid(F_x_pred(i)), 1e-8f, 1.0f - 1e-8f);
     }
 
-    std::vector<std::string> result(nrows);
-    for (Eigen::Index i = 0; i < nrows; i++) {
+    std::vector<std::string> result(nrows_);
+    for (Eigen::Index i = 0; i < nrows_; i++) {
         if (P_x_pred(i) < 0.0f) result[i] = labels[0];
         else result[i] = labels[1];
     }

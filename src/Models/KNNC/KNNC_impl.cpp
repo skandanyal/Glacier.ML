@@ -209,7 +209,7 @@ shared(distance_metric, nrows, ncols, X, Y, x_pred, least_distance, p)
 
     // voting
     std::unordered_map<std::string, int> voting;
-    for (size_t i=0; i<k; i++) {
+    for (size_t i=1; i<k; i++) {
         voting[labels[least_distance[i].second]]++;
     }
     std::string answer;
