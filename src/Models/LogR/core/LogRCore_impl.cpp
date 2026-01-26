@@ -14,10 +14,21 @@ LogRCore::LogRCore(long n_features) :
 void LogRCore::train(const Eigen::MatrixXf &X,
         const Eigen::VectorXf &Y,
         const float lr,
-        const int iterations) {
+        const int iterations)
+{
+    /*
+    * future enhancements:
+    * 1. L2 regularization
+    * 2. Early stopping
+    * 3. Eigen uses 1 thread, manual threading using OpenMP, GEMM using OpenBLAS
+    */
 
-    float nr = X.rows();
-    Eigen::Index nc = X.cols();
+    // sanity checks
+    assert(X.rows() == Y.size());             // number of rows to be equal
+    assert(z_.size() == X.rows());            // z_ to contain as many rows as X and Y
+    assert(p_.size() == Y.size());            // p_ to contain as many rows as X and Y
+
+    Eigen::Index nr = X.rows();
 
     for (int i=0; i<iterations; i++) {
 
@@ -25,10 +36,9 @@ void LogRCore::train(const Eigen::MatrixXf &X,
         z_ = X * beta_;
 
         // p = sigmoid(z) = 1 / (1 + e ^ (-z))
-        for (Eigen::Index col = 0; col < nc-1; col++) {
-            float z = std::clamp(z_(col), -50.0f, 50.0f);
-            p_(col) = 1 / (1 + exp(-1 * z));
-        }
+        // Eigen style coding - still need to learn this properly :}
+        z_ = z_.cwiseMin(50.0f).cwiseMax(50.0f);
+        p_ = 1.0f / (1.0f + (-z_.array()).exp());
 
         // compute the gradient
         delta_ = X.transpose() * (p_ - Y) / nr;

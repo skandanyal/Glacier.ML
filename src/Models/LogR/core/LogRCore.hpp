@@ -8,7 +8,7 @@ namespace Glacier::Core {
     class LogRCore {
 
     private:
-        // model parameter
+        // model parameters
         Eigen::VectorXf beta_;             // (p x 1)
         Eigen::VectorXf z_;                // (n x 1)
         Eigen::VectorXf p_;                // (n x 1)
@@ -22,14 +22,14 @@ namespace Glacier::Core {
 
     void train(const Eigen::MatrixXf &X,
         const Eigen::VectorXf &Y,
-        const float lr,
-        const int iterations);
+        float lr,
+        int iterations);
 
     Eigen::MatrixXf predict_proba(const Eigen::MatrixXf &X,
-        const float decision_boundary);
+        float decision_boundary);
 
     Eigen::MatrixXi predict(const Eigen::MatrixXi &X,
-        const float decision_boundary);
+        float decision_boundary);
     };
 }
 
