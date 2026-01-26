@@ -8,7 +8,7 @@
 ```
 
 
-Glacier.ML is a solo-student developed **performance-focused, C++20 based Machine Learning library**, designed to build and experiment with machine learning algorithms while emphasizing efficiency on modern multicore CPU architectures.
+Glacier.ML is a solo-student developed **performance-focused, C++20 based Numerical Algorithm library**, designed to build and experiment with machine learning algorithms while emphasizing efficiency on modern multicore CPU architectures.
 
 It provides:
 
