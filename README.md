@@ -14,6 +14,7 @@ Glacier.ML is a **performance-oriented C++20 numerical algorithms** library for 
 
 
 ## The project prioritizes:
+
 * explicit cost models
 * predictable memory access
 * parallel execution
@@ -45,16 +46,16 @@ These exclusions are deliberate.
 ## Language and Core Stack
 
 **Language:**     
-![C++20](https://img.shields.io/badge/C++20-00599C?style=for-the-badge\&logo=c%2B%2B\&logoColor=white)
+![C++20](https://img.shields.io/badge/C++20-00599C?style=for-the-badge\&logo=c%2B%2B\&logoColor=white)   
 
 **Numerical & Parallelism**
-![Eigen](https://img.shields.io/badge/Eigen3.0-1F1232?style=for-the-badge\&logo=matrix\&logoColor=white)
-![OpenMP](https://img.shields.io/badge/OpenMP-26667F?style=for-the-badge\&logo=openmp\&logoColor=white)
-![OpenBLAS](https://img.shields.io/badge/OpenBLAS-E00?style=for-the-badge\&logo=openblas\&logoColor=white)
+![Eigen](https://img.shields.io/badge/Eigen3.0-1F1232?style=for-the-badge\&logo=matrix\&logoColor=white)     
+![OpenMP](https://img.shields.io/badge/OpenMP-26667F?style=for-the-badge\&logo=openmp\&logoColor=white)    
+![OpenBLAS](https://img.shields.io/badge/OpenBLAS-E00?style=for-the-badge\&logo=openblas\&logoColor=white)     
 
 **Build and Profiling:**       
-![CMake](https://img.shields.io/badge/CMake-06466B?style=for-the-badge\&logo=cmake\&logoColor=white)
-![perf](https://img.shields.io/badge/Perf-E03C31?style=for-the-badge\&logo=linux\&logoColor=white)
+![CMake](https://img.shields.io/badge/CMake-06466B?style=for-the-badge\&logo=cmake\&logoColor=white)      
+![perf](https://img.shields.io/badge/Perf-E03C31?style=for-the-badge\&logo=linux\&logoColor=white)     
 
 
 ## Architecture
@@ -70,16 +71,17 @@ Link-Time Optimization (LTO) will be evaluated after architectural stabilization
 
 ## Benchmarked Algorithms
 
-|                  Models                      |               Comparision against `Scikit-learn`            |
-|:--------------------------------------------:|:-----------------------------------------------------------:|
-|            Logistic Regression               | parity in smaller datasets (1000x10), upto 2x slower beyond |       
-|      k-Nearest Neighbors (Classifier)        |                       4x to 30x slower                      |
-|Support Vector Machine - PEGASOS (Classifier) |                       4x to 10x faster 					 |
+|                    Models                     |             Comparision against `Scikit-learn`              |
+|:---------------------------------------------:|:-----------------------------------------------------------:|
+|              Logistic Regression              | parity in smaller datasets (1000x10), upto 2x slower beyond | 
+|       k-Nearest Neighbors (Classifier)        |                      4x to 30x slower                       |
+| Support Vector Machine - PEGASOS (Classifier) |                   4x to 10x faster 					                    |
 * Results derived considering Wall clock time taken to initialize and train a model and to predict on a dataset of size 10000x10.
 * Hot spots identified using `perf`.
 
 
 ## These implementations are used as vehicles for studying:
+
 * memory layouts
 * vectorization opportunities
 * threading strategies
