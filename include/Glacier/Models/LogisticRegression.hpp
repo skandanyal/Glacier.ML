@@ -36,9 +36,7 @@ namespace Glacier::Models {
             int no_threads=0
             );
 
-        void train(const float alpha,
-            const int iterations
-            );
+        void train(float alpha, int iteration);
 
         std::string predict(std::vector<float> &x_pred,
             float decision_boundary

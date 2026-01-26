@@ -129,27 +129,48 @@ Models::Logistic_Regression::Logistic_Regression
 
 void Models::Logistic_Regression::train(
     const float lr,
-    const int iterations)
+    const int iteration)
 {
 
     lr_ = lr;
-    iterations_ = iterations;
+    iterations_ = iteration;
 
     // training loop
     core_.train(X_, Y_, lr_, iterations_);
-    LOG_DEBUG("Final loss at the end ", loss);
-    std::cout << "\n";
+    // LOG_DEBUG("Final loss at the end ", loss);
+    // std::cout << "\n";
 
     LOG_INFO("Model training is complete.");
     std::cout << "\n";
 }
 
-std::string Models::Logistic_Regression::predict(
-    std::vector<float> &x_pred)
+/*
+*Concrete next refactor steps I’d suggest to him:
+
+Introduce a Dataset / MatrixView abstraction
+
+Move normalization into a reusable transformer
+
+Make constructors cheap
+
+Switch LOG_ERROR → exceptions or expected<T>
+
+Centralize threading & execution policies
+
+Add unit tests for math kernels
+
+If he does even half of that, this turns from “cool student project” into serious portfolio material.
+
+*/
+
+
+std::string predict(std::vector<float> &x_pred,
+            float decision_boundary
+            )
 {
     LOG_INFO("Singular prediction initiated...");
 
-    if (x_pred.size() + 1 != Beta.cols()) {
+    if (x_pred.size() + 1 != .cols()) {
         LOG_ERROR(("Incompatible size of vector passed. Expected size: " + std::to_string(Beta.cols())));
     }
 
@@ -163,7 +184,7 @@ std::string Models::Logistic_Regression::predict(
 
     // normalizing the x matrix
     for (Eigen::Index i = 0; i < Beta.cols() - 1; i++)
-        x(i+1) = (x(i+1) - mean(i)) / std_dev(i);
+        x(i+1) = (x(i+1).array() - mean_(i)) / std_dev_(i);
 
     float ans = x.dot(Beta);
     if (ans < 0.0f)
