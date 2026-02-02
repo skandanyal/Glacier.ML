@@ -48,13 +48,13 @@ These exclusions are deliberate.
 **Language:**     
 ![C++20](https://img.shields.io/badge/C++20-00599C?style=for-the-badge\&logo=c%2B%2B\&logoColor=white)   
 
-**Numerical & Parallelism**
-![Eigen](https://img.shields.io/badge/Eigen3.0-1F1232?style=for-the-badge\&logo=matrix\&logoColor=white)     
-![OpenMP](https://img.shields.io/badge/OpenMP-26667F?style=for-the-badge\&logo=openmp\&logoColor=white)    
-![OpenBLAS](https://img.shields.io/badge/OpenBLAS-E00?style=for-the-badge\&logo=openblas\&logoColor=white)     
+**Numerical & Parallelism**     
+![Eigen](https://img.shields.io/badge/Eigen3.0-1F1232?style=for-the-badge\&logo=matrix\&logoColor=white)
+![OpenMP](https://img.shields.io/badge/OpenMP-26667F?style=for-the-badge\&logo=openmp\&logoColor=white)
+![OpenBLAS](https://img.shields.io/badge/OpenBLAS-E00?style=for-the-badge\&logo=openblas\&logoColor=white)
 
-**Build and Profiling:**       
-![CMake](https://img.shields.io/badge/CMake-06466B?style=for-the-badge\&logo=cmake\&logoColor=white)      
+**Build and Profiling:**           
+![CMake](https://img.shields.io/badge/CMake-06466B?style=for-the-badge\&logo=cmake\&logoColor=white)
 ![perf](https://img.shields.io/badge/Perf-E03C31?style=for-the-badge\&logo=linux\&logoColor=white)     
 
 
