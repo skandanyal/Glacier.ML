@@ -55,7 +55,10 @@ These exclusions are deliberate.
 
 **Build and Profiling:**           
 ![CMake](https://img.shields.io/badge/CMake-06466B?style=for-the-badge\&logo=cmake\&logoColor=white)
-![perf](https://img.shields.io/badge/Perf-E03C31?style=for-the-badge\&logo=linux\&logoColor=white)     
+![perf](https://img.shields.io/badge/Perf-E03C31?style=for-the-badge\&logo=linux\&logoColor=white)
+
+**Testing**     
+![GTest](https://img.shields.io/badge/GTest-E03C31?style=for-the-badge\&logo=gtest\&logoColor=white)
 
 
 ## Architecture
