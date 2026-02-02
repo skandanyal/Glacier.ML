@@ -46,15 +46,6 @@ namespace Glacier::Models {
             float decision_boundary
             );
 
-        std::vector<float> predict_proba (std::vector<float> &x_pred);
-        std::vector<std::vector<float>> predict_proba (std::vector<std::vector<float>> &x_pred);
-
-        void analyze_2_targets(std::vector<std::vector<float>> &x_test,
-            std::vector<std::string> &y_test
-            );
-
-        void print_Beta_values();
-
     private:
         Glacier::Core::LogRCore core_;
     };

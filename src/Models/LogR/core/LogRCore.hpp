@@ -16,20 +16,23 @@ namespace Glacier::Core {
         Eigen::VectorXf P_x_pred_;           // (n x 1)
         Eigen::VectorXf delta_;              // (p x 1)
 
+        // toggle
+        bool is_trained_;
+
 
     public:
-    LogRCore(long n_features);
+        LogRCore(long n_features);
 
-    void train(const Eigen::MatrixXf &X,
-        const Eigen::VectorXf &Y,
-        float lr,
-        int iterations);
+        void train(const Eigen::MatrixXf &X,
+            const Eigen::VectorXf &Y,
+            float lr,
+            int iterations);
 
-    Eigen::MatrixXf predict_proba(const Eigen::MatrixXf &X,
-        float decision_boundary);
+        Eigen::VectorXi predict(const Eigen::MatrixXf &X,
+                                float decision_boundary);
 
-    Eigen::MatrixXi predict(const Eigen::MatrixXi &X,
-        float decision_boundary);
+    private:
+        Eigen::MatrixXf predict_proba(const Eigen::MatrixXf &X);
     };
 }
 
