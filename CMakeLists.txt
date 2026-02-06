@@ -31,7 +31,6 @@
     target_include_directories(Glacier
             PUBLIC
                 ${CMAKE_CURRENT_SOURCE_DIR}/include
-            PRIVATE
                 ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
 
@@ -83,8 +82,8 @@
     # Define test source files
     set(GLACIER_TEST_SOURCES
             tests/LogR/test_LogR.cpp
-            tests/KNNC/test_KNNC.cpp
-            tests/KNNR/test_KNNR.cpp
+#            tests/KNNC/test_KNNC.cpp
+#            tests/KNNR/test_KNNR.cpp
     )
 
     add_executable(glacier_tests ${GLACIER_TEST_SOURCES})

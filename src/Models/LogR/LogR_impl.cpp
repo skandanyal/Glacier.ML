@@ -31,7 +31,7 @@ Models::Logistic_Regression::Logistic_Regression
         omp_set_num_threads(no_threads_);
         Eigen::setNbThreads(no_threads_);
     }
-    LOG_DEBUG("Number of threads", threads);
+    LOG_DEBUG("Number of threads", no_threads_);
 
     // nrows_, ncols_
     LOG_DEBUG("Number of rows in X before adding the bias column", nrows_);
@@ -66,8 +66,8 @@ Models::Logistic_Regression::Logistic_Regression
         for (Eigen::Index row = 0; row < nrows_; row++)
             // X matrix, with 0th column as 1
             X_(row, col + 1) = X_i[row][col];
-    LOG_DEBUG("Number of rows in x_train", X.rows());
-    LOG_DEBUG("Number of cols in x_train", X.cols());
+    LOG_DEBUG("Number of rows in x_train", X_.rows());
+    LOG_DEBUG("Number of cols in x_train", X_.cols());
     std::cout << "\n";
 
     // normalize X
@@ -113,9 +113,9 @@ Models::Logistic_Regression::Logistic_Regression
         else if (Y_i[i] == labels_[1]) Y_(i) = 1;
     }
     // Y_ is ready to be used
-    LOG_DEBUG("Size of labels", labels.size());
-    LOG_DEBUG("Number of rows in y_train", Y.rows());
-    LOG_DEBUG("Number of cols in y_train", Y.cols());
+    LOG_DEBUG("Size of labels", labels_.size());
+    LOG_DEBUG("Number of rows in y_train", Y_.rows());
+    LOG_DEBUG("Number of cols in y_train", Y_.cols());
     std::cout << "\n";
 }
 
