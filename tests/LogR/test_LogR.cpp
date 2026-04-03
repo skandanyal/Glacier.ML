@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 
-// Include your headers based on project structure
 #include "Glacier/Models/LogisticRegression.hpp"
 #include "Models/LogR/core/LogRCore.hpp"
 #include "Glacier/Utils/logs.hpp"
