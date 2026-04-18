@@ -1,70 +1,65 @@
 cmake_minimum_required(VERSION 3.20)
+if(POLICY CMP0167)
+    cmake_policy(SET CMP0167 NEW)
+endif()
+if(POLICY CMP0135)
+    cmake_policy(SET CMP0135 NEW)
+endif()
 
-cmake_policy(SET CMP0167 NEW)
+project(GlacierML LANGUAGES CXX)
 
-project(Glacier.ML LANGUAGES CXX)
-
-# ----------------------------
-# Language standard
-# ----------------------------
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
 
-# ----------------------------
+# --------------------------------------------------
 # Dependencies
-# ----------------------------
+# --------------------------------------------------
 find_package(OpenMP REQUIRED)
 find_package(BLAS REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED)
 
-# ----------------------------
-# Glacier compiled library
-# ----------------------------
-file(GLOB_RECURSE GLACIER_SOURCES
-        src/*.cpp
+# --------------------------------------------------
+# Library: glacier_logr
+# --------------------------------------------------
+# SOURCE LINKING: Implementation files are added here.
+add_library(glacier_logr STATIC
+        src/Models/LogR/LogR_impl.cpp
+        src/Models/LogR/core/LogRCore_impl.cpp
 )
 
-add_library(Glacier STATIC ${GLACIER_SOURCES})
-
-target_include_directories(Glacier
-        PUBLIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/include
-            ${CMAKE_CURRENT_SOURCE_DIR}/src
+# HEADER LINKING: Search paths for .hpp files.
+# 'include' allows: #include "Glacier/Models/LogisticRegression.hpp"
+# 'src/Models/LogR/core' allows: #include "LogRCore.hpp"
+target_include_directories(glacier_logr PUBLIC
+        include
+        src
 )
 
-target_link_libraries(Glacier
-        PUBLIC
+target_link_libraries(glacier_logr PUBLIC
         Eigen3::Eigen
         Boost::boost
         BLAS::BLAS
         OpenMP::OpenMP_CXX
 )
 
-# ----------------------------
-# Compile options per build type
-# ----------------------------
-target_compile_options(Glacier
-        PRIVATE
-        $<$<CONFIG:Debug>:-g;-O0>
-        $<$<CONFIG:Release>:-O3;-march=native;-ffast-math>
-        $<$<CONFIG:Benchmark>:-O3;-march=native;-g;-ffast-math>
+# --------------------------------------------------
+# GoogleTest Infrastructure
+# --------------------------------------------------
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip
 )
+FetchContent_MakeAvailable(googletest)
 
-# ----------------------------
-# Compile definitions per build type
-# ----------------------------
-target_compile_definitions(Glacier
-        PUBLIC
-        $<$<CONFIG:Debug>:GLACIER_DEBUG>
-        $<$<CONFIG:Release>:GLACIER_RELEASE>
-        $<$<CONFIG:Benchmark>:GLACIER_BENCHMARK>
-)
+include(GoogleTest)
+enable_testing()
 
-# Auto-create executables from list
-foreach(DRIVER ${BENCHMARK_DRIVERS})
-    get_filename_component(DRIVER_NAME ${DRIVER} NAME_WE)
-    add_executable(${DRIVER_NAME} ${DRIVER})
-    target_link_libraries(${DRIVER_NAME} PRIVATE Glacier)
-endforeach()
+# --------------------------------------------------
+# Test Bench
+# --------------------------------------------------
+add_executable(test_logr tests/LogR/test_LogR.cpp)
+target_link_libraries(test_logr PRIVATE glacier_logr GTest::gtest_main)
+gtest_discover_tests(test_logr)
+
