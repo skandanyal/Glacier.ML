@@ -5,7 +5,12 @@
 #include <cstdlib>
 
 
-#define LOG_ERROR(x) do { std::cerr << "[ERROR] " << x << " Exiting program here... \n"; std::exit(EXIT_FAILURE); } while(0)
+#define LOG_ERROR(msg) \
+do { \
+    std::cerr << "[ERROR] " << msg << std::endl; \
+    std::cerr.flush(); \
+    std::exit(1); \
+} while(0)
 
 #if defined(GLACIER_DEBUG) || defined(GLACIER_RELEASE)
     #define LOG_INFO(x) std::cout << "\033[36m[INFO]  \033[0m" << x << "\n"
