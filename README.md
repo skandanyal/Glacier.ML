@@ -6,10 +6,7 @@
 ╚██████╔╝███████╗██║  ██║╚██████╗██║███████╗██║  ██║██╗██║ ╚═╝ ██║███████╗
  ╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝╚══════╝
 ```
-
-
 # Glacier.ML
-
 Glacier.ML is a **performance-oriented C++20 numerical algorithms** library for implementing and studying classical machine learning algorithms on modern multicore CPUs.
 
 
@@ -59,6 +56,7 @@ These exclusions are deliberate.
 
 **Testing**     
 ![GTest](https://img.shields.io/badge/GTest-E03C31?style=for-the-badge\&logo=gtest\&logoColor=white)
+[![Glacier.ML CI](https://github.com/skandanyal/Glacier.ML/actions/workflows/main.yml/badge.svg)](https://github.com/skandanyal/Glacier.ML/actions/workflows/main.yml)
 
 
 ## Architecture
@@ -73,7 +71,6 @@ Link-Time Optimization (LTO) will be evaluated after architectural stabilization
 
 
 ## Benchmarked Algorithms
-
 |                    Models                     |             Comparision against `Scikit-learn`              |
 |:---------------------------------------------:|:-----------------------------------------------------------:|
 |              Logistic Regression              | parity in smaller datasets (1000x10), upto 2x slower beyond | 
@@ -83,21 +80,26 @@ Link-Time Optimization (LTO) will be evaluated after architectural stabilization
 * Hot spots identified using `perf`.
 
 
+## Benchmarking Environment
+Benchmarks have been conducted on:
+```
+AMD Ryzen 6600H (6 cores / 12 threads)
+```
+Benchmark results are exploratory and used primarily for relative comparison and profiling, not for leaderboard claims.
+
+
+## Testing Environment
+Models are tested on both local (as mentioned above) and cloud runtimes with the following configurations:
+* OS: Linux Ubuntu-24.04
+* Cloud instance: Through automated GitHub workflows
+
+
 ## These implementations are used as vehicles for studying:
 
 * memory layouts
 * vectorization opportunities
 * threading strategies
 * algorithmic trade-offs
-
-
-## Benchmarking Environment
-
-Benchmarks have been conducted on:
-```
-AMD Ryzen 6600H (6 cores / 12 threads)
-```
-Benchmark results are exploratory and used primarily for relative comparison and profiling, not for leaderboard claims.
 
 
 ## Example Usage
@@ -140,10 +142,10 @@ To enable ANSI color output on Windows terminals:
 
 ## Status
 
-```WORK IN PROGRESS```
+```ITERATION 2 WORK IN PROGRESS```
 
-* Interfaces are unstable
-* APIs may change without notice
+* Models now tested for stability and mathematical correctness using `GTest`.
+* GitHub workflow based `Continuous Integration` incorporated.
 * This repository reflects an evolving understanding of performance-oriented system design.
 
 
