@@ -24,18 +24,19 @@ void LogRCore::train(const Eigen::MatrixXf &X,
         const float lr,
         const int iterations)
 {
+    const Eigen::Index n = X.rows();
+    const Eigen::Index p = X.cols();
 
-    // sanity checks
+    // 1. Resize first to allocate memory
+    z_.resize(n);
+    p_.resize(n);
+    delta_.resize(p);
+
+    // 2. Now run sanity checks
     assert (X.rows() == Y.size());             // number of rows to be equal
     assert (z_.size() == X.rows());            // z_ to contain as many rows as X and Y
     assert (p_.size() == Y.size());            // p_ to contain as many rows as X and Y
     assert (X.rows() >= 2);                    // at least two rows
-
-    const Eigen::Index n = X.rows();
-
-    z_.resize(n);
-    p_.resize(n);
-    delta_.resize(X.cols());
 
     for (int i=0; i<iterations; i++) {
 

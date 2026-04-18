@@ -14,7 +14,7 @@ Models::Logistic_Regression::Logistic_Regression
     nrows_(static_cast<long>(X_i.size())),
     ncols_(static_cast<long>(X_i[0].size())),        // ncols = no. of cols before adding the bias colm
     X_(X_i.size(),  X_i[0].size() + 1),                    // +1 for the bias colm.
-    Y_(X_i.size() + 1),
+    Y_(X_i.size()),
     mean_(X_i[0].size()),
     std_dev_(X_i[0].size()),
     core_(X_i[0].size() + 1)
@@ -38,8 +38,10 @@ Models::Logistic_Regression::Logistic_Regression
     LOG_DEBUG("Number of columns in X before adding the bias column", ncols_);
 
     // check for empty dataset
-    if (X_i.empty() || Y_i.empty()) {
-        LOG_ERROR("Input data cannot be empty.");
+    if (X_i.empty() || Y_i.empty() || nrows_ == 0 || ncols_ == 0) {
+        std::cerr << "Datasets cannot be left empty." << std::endl;
+        std::cerr.flush();
+        LOG_ERROR("Datasets cannot be left empty.");
     }
 
     // check for inconsistency in the dataset
