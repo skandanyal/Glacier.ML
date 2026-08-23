@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(OpenMP REQUIRED)
 find_package(BLAS REQUIRED)
 find_package(Eigen3 REQUIRED)
-find_package(Boost REQUIRED)
+#find_package(Boost REQUIRED)
 
 # --------------------------------------------------
 # Library: glacier_logr
@@ -38,7 +38,7 @@ target_include_directories(glacier_logr PUBLIC
 
 target_link_libraries(glacier_logr PUBLIC
         Eigen3::Eigen
-        Boost::boost
+#        Boost::boost
         BLAS::BLAS
         OpenMP::OpenMP_CXX
 )

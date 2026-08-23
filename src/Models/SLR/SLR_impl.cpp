@@ -6,7 +6,7 @@
 #include <iostream>
 #include <numeric>
 #include <vector>
-#include <boost/math/distributions/students_t.hpp>
+// #include <boost/math/distributions/students_t.hpp>
 
 #include "Glacier/Models/KNNClassifier.hpp"
 
@@ -142,25 +142,25 @@ void Simple_Linear_Regression::hypothesis(std::string param, float t_statistic, 
 	std::cout << "\n";
 }
 
-void Simple_Linear_Regression::print_confidence_intervals(const std::string& param, float measure, float SE) {
-	LOG_INFO("Confidence intervals of " + param);
-
-	std::vector<std::pair<std::string, float>> confidence_levels = {
-		{"95%", 0.05},
-		{"99%", 0.01}
-	};
-	boost::math::students_t dist(x_test_size - 2);  // global x_test_size assumed
-
-	for (auto &[label, alpha] : confidence_levels) {
-		double t_critical = boost::math::quantile(boost::math::complement(dist, alpha / 2));
-		float margin = t_critical * SE;
-		float lower = measure - margin;
-		float upper = measure + margin;
-
-		std::cout << "Confidence interval for " << label << " confidence level: [" << lower << ", " << upper << "]\n";
-	}
-	std::cout << "\n";
-}
+// void Simple_Linear_Regression::print_confidence_intervals(const std::string& param, float measure, float SE) {
+// 	LOG_INFO("Confidence intervals of " + param);
+//
+// 	std::vector<std::pair<std::string, float>> confidence_levels = {
+// 		{"95%", 0.05},
+// 		{"99%", 0.01}
+// 	};
+// 	boost::math::students_t dist(x_test_size - 2);  // global x_test_size assumed
+//
+// 	for (auto &[label, alpha] : confidence_levels) {
+// 		double t_critical = boost::math::quantile(boost::math::complement(dist, alpha / 2));
+// 		float margin = t_critical * SE;
+// 		float lower = measure - margin;
+// 		float upper = measure + margin;
+//
+// 		std::cout << "Confidence interval for " << label << " confidence level: [" << lower << ", " << upper << "]\n";
+// 	}
+// 	std::cout << "\n";
+// }
 
 void Simple_Linear_Regression::predict_print(const std::vector<float>& x_pred, const std::vector<float>& y_pred) {
 	LOG_INFO("Predicted values: ");

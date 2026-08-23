@@ -98,13 +98,13 @@ float Glacier::Utils::mean(const std::vector<float>& x) {
     return mean / x.size();
 }
 
-double Glacier::Utils::get_p_value(double t_stat, int dof) {
-    using namespace boost::math;
-
-    students_t dist(dof);
-    double p = 2.0 * (1.0 - cdf(dist, std::abs(t_stat)));
-    return p;
-}
+// double Glacier::Utils::get_p_value(double t_stat, int dof) {
+//     using namespace boost::math;
+//
+//     students_t dist(dof);
+//     double p = 2.0 * (1.0 - cdf(dist, std::abs(t_stat)));
+//     return p;
+// }
 
 /**
  * Generic evaluation for binary classification.
