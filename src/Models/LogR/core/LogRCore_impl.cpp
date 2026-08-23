@@ -19,11 +19,13 @@ LogRCore::LogRCore(long n_features) :
     * 3. Eigen uses 1 thread, manual threading using OpenMP, GEMM using OpenBLAS
     */
 
-void LogRCore::train(const Eigen::MatrixXf &X,
-        const Eigen::VectorXf &Y,
-        const float lr,
-        const int iterations)
-{
+void LogRCore::train(
+    const Eigen::MatrixXf &X,
+    const Eigen::VectorXf &Y,
+    const float lr,
+    const int iterations
+    ){
+
     const Eigen::Index n = X.rows();
     const Eigen::Index p = X.cols();
 
@@ -58,8 +60,10 @@ void LogRCore::train(const Eigen::MatrixXf &X,
     is_trained_ = true;
 }
 
-Eigen::MatrixXf LogRCore::predict_proba(const Eigen::MatrixXf &X)
-{
+Eigen::MatrixXf LogRCore::predict_proba (
+    const Eigen::MatrixXf &X
+    ) {
+
     assert (X.cols() == beta_.size());
     assert (is_trained_ == true);
 
@@ -70,9 +74,10 @@ Eigen::MatrixXf LogRCore::predict_proba(const Eigen::MatrixXf &X)
     return p;
 }
 
-Eigen::VectorXi LogRCore::predict(const Eigen::MatrixXf &X,
-    const float decision_boundary)
-            {
+Eigen::VectorXi LogRCore::predict (
+    const Eigen::MatrixXf &X,
+    const float decision_boundary
+    ) {
 
     assert (is_trained_ == true);
     assert (X.cols() == beta_.size());

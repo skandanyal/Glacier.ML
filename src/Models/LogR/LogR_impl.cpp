@@ -18,7 +18,7 @@ Models::Logistic_Regression::Logistic_Regression
     mean_(X_i[0].size()),
     std_dev_(X_i[0].size()),
     core_(X_i[0].size() + 1)
-{
+    {
 
     // the only job here is to prepare the X and Y matrices for the train fn to work upon
 
@@ -123,8 +123,8 @@ Models::Logistic_Regression::Logistic_Regression
 
 void Models::Logistic_Regression::train(
     const float lr,
-    const int iteration)
-{
+    const int iteration
+    ){
 
     lr_ = lr;
     iterations_ = iteration;
@@ -139,10 +139,10 @@ void Models::Logistic_Regression::train(
     std::cout << "\n";
 }
 
-std::string Models::Logistic_Regression::predict
-    (std::vector<float>& x_pred,
-        float decision_boundary)
-{
+std::string Models::Logistic_Regression::predict(
+    std::vector<float>& x_pred,
+    float decision_boundary
+    ){
 
     if (x_pred.size() != ncols_) {
         LOG_ERROR("Dataset size does not match number of columns");
@@ -160,10 +160,10 @@ std::string Models::Logistic_Regression::predict
     return labels_[result[0]];
 }
 
-std::vector<std::string> Models::Logistic_Regression::predict
-    (std::vector<std::vector<float>>& x_pred,
-    float decision_boundary)
-{
+std::vector<std::string> Models::Logistic_Regression::predict (
+    std::vector<std::vector<float>>& x_pred,
+    float decision_boundary
+    ){
 
     if (x_pred[0].size() != ncols_) {
         LOG_ERROR("Train and test dataset have different number of features.");

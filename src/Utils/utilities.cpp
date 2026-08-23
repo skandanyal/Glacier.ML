@@ -111,7 +111,7 @@ float Glacier::Utils::mean(const std::vector<float>& x) {
  * Decoupled from the model class to support Systems-level modularity.
  */
 
-void analyze_performance(const std::vector<std::string> &y_test, const std::vector<std::string> &y_pred) {
+void binary_classification_report(const std::vector<std::string> &y_test, const std::vector<std::string> &y_pred) {
     if (y_test.empty() || y_test.size() != y_pred.size()) {
         return;
     }
