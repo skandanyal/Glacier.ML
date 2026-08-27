@@ -21,7 +21,6 @@ jobs:
             cmake \
             ninja-build \
             libeigen3-dev \
-            libboost-all-dev \
             libopenblas-dev \
             libomp-dev
 
