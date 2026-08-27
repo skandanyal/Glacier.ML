@@ -150,13 +150,17 @@ ctest --test-dir build --output-on-failure
 
 ## Benchmarking & Performance
 
-Wall-clock training and prediction execution compared against Python `scikit-learn` on a $10,000 \times 10$ dataset (Hardware: AMD Ryzen 6600H, 6C/12T):
+Wall-clock training and prediction execution compared against Python `scikit-learn` on the [Give Me Some Credit](https://www.kaggle.com/c/GiveMeSomeCredit), 
+a $10,000 \times 10$ dataset (Hardware: AMD Ryzen 6600H, 6C/12T):
 
-| Algorithm | Comparison vs `scikit-learn` | Architectural Focus |
-| :--- | :--- | :--- |
-| **Logistic Regression** | Parity on small datasets; up to $2\times$ scale delta | Decoupled core kernel, clamped activation, zero-allocation hot loop |
-| **k-Nearest Neighbors** | $4\times$ to $30\times$ baseline | Distance metric SIMD vectorization & cache locality |
-| **Support Vector Machine (PEGASOS)** | $4\times$ to $10\times$ **faster** | Stochastic sub-gradient descent on primal formulations |
+|       Algorithm - `Glacier v2`       | Comparison vs `Glacier v1` |                               Comparison vs `Scikit-learn`                               |
+|:------------------------------------:|:--------------------------:|:----------------------------------------------------------------------------------------:|
+|       **Logistic Regression**        |      $30-36\%$ faster      | Parity on small datasets;<br>up to $2\times$ faster at 50k rows; slower beyond 120k rows |
+
+|       Algorithm - `Glacier v1`       | Comparison vs `Scikit-learn` |
+|:------------------------------------:|:----------------------------:|
+|       **k-Nearest Neighbors**        |    v1 $4-30\times$ slower    | 
+| **Support Vector Machine (PEGASOS)** |    v1 $4-10\times$ faster    |
 
 ---
 
