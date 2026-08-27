@@ -33,7 +33,7 @@ int main() {
 
     // ---------------------- warm-up ----------------------
     for (int i = 0; i < 5; i++) {
-        Glacier::Models::Logistic_Regression iceberg_500(x_train_500, y_train_500);
+        Glacier::Models::Logistic_Regression iceberg_500(x_train_500, y_train_500, 0);
         iceberg_500.train(alpha, iterations);
         iceberg_500.predict(x_test, 0.5);
     }
@@ -44,7 +44,7 @@ int main() {
     std::vector<double> timing_500;
     for (int i = 0; i < RUNS; i++) {
         auto start = std::chrono::system_clock::now();
-        Glacier::Models::Logistic_Regression model(x_train_500, y_train_500);
+        Glacier::Models::Logistic_Regression model(x_train_500, y_train_500, 0);
         model.train(alpha, iterations);
         std::vector<std::string> pred =
             model.predict(x_test, 0.5);
@@ -59,7 +59,7 @@ int main() {
     std::vector<double> timing_1000;
     for (int i = 0; i < RUNS; i++) {
         auto start = std::chrono::system_clock::now();
-        Glacier::Models::Logistic_Regression model(x_train_1000, y_train_1000);
+        Glacier::Models::Logistic_Regression model(x_train_1000, y_train_1000, 0);
         model.train(alpha, iterations);
         std::vector<std::string> pred =
             model.predict(x_test, 0.5);
@@ -74,7 +74,7 @@ int main() {
     std::vector<double> timing_5000;
     for (int i = 0; i < RUNS; i++) {
         auto start = std::chrono::system_clock::now();
-        Glacier::Models::Logistic_Regression model(x_train_5000, y_train_5000);
+        Glacier::Models::Logistic_Regression model(x_train_5000, y_train_5000, 0);
         model.train(alpha, iterations);
         std::vector<std::string> pred =
             model.predict(x_test, 0.5);
@@ -89,7 +89,7 @@ int main() {
     std::vector<double> timing_10000;
     for (int i = 0; i < RUNS; i++) {
         auto start = std::chrono::system_clock::now();
-        Glacier::Models::Logistic_Regression model(x_train_10000, y_train_10000);
+        Glacier::Models::Logistic_Regression model(x_train_10000, y_train_10000, 0);
         model.train(alpha, iterations);
         std::vector<std::string> pred =
             model.predict(x_test, 0.5);
@@ -104,7 +104,7 @@ int main() {
     std::vector<double> timing_50000;
     for (int i = 0; i < RUNS; i++) {
         auto start = std::chrono::system_clock::now();
-        Glacier::Models::Logistic_Regression model(x_train_50000, y_train_50000);
+        Glacier::Models::Logistic_Regression model(x_train_50000, y_train_50000, 0);
         model.train(alpha, iterations);
         std::vector<std::string> pred =
             model.predict(x_test, 0.5);
@@ -119,7 +119,7 @@ int main() {
     std::vector<double> timing_100000;
     for (int i = 0; i < RUNS; i++) {
         auto start = std::chrono::system_clock::now();
-        Glacier::Models::Logistic_Regression model(x_train_100000, y_train_100000);
+        Glacier::Models::Logistic_Regression model(x_train_100000, y_train_100000, 0);
         model.train(alpha, iterations);
         std::vector<std::string> pred =
             model.predict(x_test, 0.5);
@@ -134,7 +134,7 @@ int main() {
     std::vector<double> timing_140000;
     for (int i = 0; i < RUNS; i++) {
         auto start = std::chrono::system_clock::now();
-        Glacier::Models::Logistic_Regression model(x_train_140000, y_train_140000);
+        Glacier::Models::Logistic_Regression model(x_train_140000, y_train_140000, 0);
         model.train(alpha, iterations);
         std::vector<std::string> pred =
             model.predict(x_test, 0.5);
