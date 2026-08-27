@@ -26,10 +26,10 @@ jobs:
             libomp-dev
 
       - name: Configure CMake
-        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+        run: cmake -B cmake-build-benchmark -G Ninja -DCMAKE_BUILD_TYPE=Debug
 
       - name: Build Targets
-        run: cmake --build build --target test_logr
+        run: cmake --cmake-build-benchmark cmake-build-benchmark --target test_logr
 
       - name: Run Tests
         run: |
