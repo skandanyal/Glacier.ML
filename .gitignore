@@ -7,3 +7,6 @@ cmake-build-*/
 build/
 Latex_things/
 .idea/
+cmake-build-benchmark/
+benchmark_drivers/instructions.md
+benchmark_drivers/cmake-build-benchmark/
