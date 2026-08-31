@@ -25,12 +25,12 @@ jobs:
             libomp-dev
 
       - name: Configure CMake
-        run: cmake -B cmake-build-benchmark -G Ninja -DCMAKE_BUILD_TYPE=Debug
+        run: cmake -B cmake-build-debug -G Ninja -DCMAKE_BUILD_TYPE=Debug
 
       - name: Build Targets
-        run: cmake --build cmake-build-benchmark --target test_logr
+        run: cmake --build cmake-build-debug --target test_logr
 
       - name: Run Tests
         run: |
-          cd build
+          cd cmake-build-debug
           ctest --output-on-failure
