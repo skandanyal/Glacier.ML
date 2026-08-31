@@ -82,6 +82,7 @@ TEST_F(LogisticRegressionTest, BatchInferenceSize) {
 
 // --- Systems & Error Handling Tests ---
 
+/* TASK: support to throw an error upon empty dataset to be added */
 // TEST(GlacierSystemsTest, EmptyDataHandling) {
 //     // Tests program termination on empty input using GTest Death Tests
 //     std::vector<std::vector<float>> X_empty;
@@ -90,7 +91,7 @@ TEST_F(LogisticRegressionTest, BatchInferenceSize) {
 //     // Matches the error string defined in LogR_impl.cpp
 //     ASSERT_DEATH({
 //         Glacier::Models::Logistic_Regression model(X_empty, Y_empty);
-//     }, ".*Datasets cannot be left empty.*");
+//     }, ".*Input dataset X or target Y cannot be empty.*");
 // }
 
 TEST(GlacierSystemsTest, ThreadInitialization) {
