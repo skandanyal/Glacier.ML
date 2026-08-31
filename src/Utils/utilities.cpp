@@ -1,4 +1,5 @@
 #include "Glacier/Utils/utilities.hpp"
+#include "Glacier/Utils/logs.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -19,6 +20,10 @@ bool has_header ) {
             x.push_back(std::stof(x_val));
             y.push_back(std::stof(y_val));
         }
+    }
+
+    if (x.empty() || y.empty()) {
+        LOG_ERROR("Input data cannot be empty.");
     }
 }
 void Glacier::Utils::read_csv_r(const std::string& filename, std::vector<std::vector<float>>& features, std::vector<float>& targets,
@@ -50,6 +55,10 @@ void Glacier::Utils::read_csv_r(const std::string& filename, std::vector<std::ve
             features.push_back(row);
             targets.push_back(y);
         }
+    }
+
+    if (features.empty() || targets.empty()) {
+        LOG_ERROR("Input data cannot be empty.");
     }
 }
 
@@ -88,9 +97,16 @@ void Glacier::Utils::read_csv_c(const std::string& filename, std::vector<std::ve
             y_train.push_back(label);
         }
     }
+
+    if (x_train.empty() || y_train.empty()) {
+        LOG_ERROR("Input data cannot be empty.");
+    }
 }
 
 float Glacier::Utils::mean(const std::vector<float>& x) {
+    if (x.empty()) {
+        LOG_ERROR("Input vector cannot be empty.");
+    }
     float mean = 0.0;
     for (auto i:x) {
         mean += i;
@@ -111,7 +127,7 @@ float Glacier::Utils::mean(const std::vector<float>& x) {
  * Decoupled from the model class to support Systems-level modularity.
  */
 
-void binary_classification_report(const std::vector<std::string> &y_test, const std::vector<std::string> &y_pred) {
+void Glacier::Utils::binary_classification_report(const std::vector<std::string> &y_test, const std::vector<std::string> &y_pred) {
     if (y_test.empty() || y_test.size() != y_pred.size()) {
         return;
     }
