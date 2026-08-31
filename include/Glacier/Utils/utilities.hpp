@@ -28,8 +28,8 @@ namespace Glacier {
 
         double get_p_value(double t_stat, int dof);
 
-        void binary_classification_report(std::vector<std::vector<float>> &x_test,
-            std::vector<std::string> &y_test
+        void binary_classification_report(const std::vector<std::string> &y_test,
+            const std::vector<std::string> &y_pred
             );
     };
 }
