@@ -3,6 +3,7 @@
 #include "Glacier/Models/LogisticRegression.hpp"
 #include "Models/LogR/core/LogRCore.hpp"
 #include <map>
+#include <stdexcept>
 
 using namespace Glacier;
 
@@ -39,6 +40,7 @@ Models::Logistic_Regression::Logistic_Regression
 
     // check for empty dataset
     if (X_i.empty() || Y_i.empty() || nrows_ == 0 || ncols_ == 0) {
+        throw std::invalid_argument("Input dataset X or target Y cannot be empty.");
         std::cerr << "Datasets cannot be left empty." << std::endl;
         std::cerr.flush();
         LOG_ERROR("Datasets cannot be left empty.");
